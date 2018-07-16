@@ -187,8 +187,10 @@ RenderComponentWalker.prototype = {
     },
 
     _commitComp (comp, assembler, cullingMask) {
-        if (this.material._hash != comp._material._hash || 
-            this.cullingMask !== cullingMask) {
+        if (this.material === null 
+            || this.material === undefined
+            || (comp._material && this.material._hash != comp._material._hash) 
+            || this.cullingMask !== cullingMask) {
             this._flush();
     
             this.node = assembler.useModel ? comp.node : this._dummyNode;

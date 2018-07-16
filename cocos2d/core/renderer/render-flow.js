@@ -92,20 +92,20 @@ _proto._opacity = function (node) {
 
 _proto._updateRenderData = function (node) {
     let comp = node._renderComponent;
-    comp._assembler.updateRenderData(comp);
+    comp && comp._assembler.updateRenderData(comp);
     node._renderFlag &= ~UPDATE_RENDER_DATA;
     this._next._func(node);
 };
 
 _proto._render = function (node) {
     let comp = node._renderComponent;
-    _walker._commitComp(comp, comp._assembler, node._cullingMask);
+    comp && _walker._commitComp(comp, comp._assembler, node._cullingMask);
     this._next._func(node);
 };
 
 _proto._customIARender = function (node) {
     let comp = node._renderComponent;
-    _walker._commitIA(comp, comp._assembler, node._cullingMask);
+    comp && _walker._commitIA(comp, comp._assembler, node._cullingMask);
     this._next._func(node);
 };
 
