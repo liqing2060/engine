@@ -25,15 +25,9 @@
  ****************************************************************************/
 
 const EventTarget = require('../event/event-target');
-const sys = require('../platform/CCSys');
-const JS = require('../platform/js');
-const misc = require('../utils/misc');
-const game = require('../CCGame');
 const renderEngine = require('../renderer/render-engine');
 const renderer = require('../renderer');
 require('../platform/CCClass');
-
-const TextureAsset = renderEngine.TextureAsset;
 const gfx = renderEngine.gfx;
 
 const GL_NEAREST = 9728;                // gl.NEAREST
@@ -542,6 +536,14 @@ var Texture2D = cc.Class({
         //dispatch load event to listener.
         this.loaded = true;
         this.emit("load");
+
+        if (cc.macro.CLEANUP_IMAGE_CACHE && this._image instanceof HTMLImageElement) {
+            // wechat game platform will cache image parsed data, 
+            // so image will consume much more memory than web, releasing it
+            this._image.src = "";
+            // Release image in loader cache
+            cc.loader.removeItem(this._image.id);
+        }
     },
 
     /**

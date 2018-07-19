@@ -669,7 +669,7 @@ var game = {
 
         if (isWeChatGame || CC_JSB) {
             this.container = localContainer = document.createElement("DIV");
-            this.frame = localContainer.parentNode === document.body ? document.documentElement : localContainer.parentNode;
+            this.frame = document.documentElement;
             if (cc.sys.browserType === cc.sys.BROWSER_TYPE_WECHAT_GAME_SUB) {
                 localCanvas = wx.getSharedCanvas();
             }
@@ -744,7 +744,9 @@ var game = {
             this._renderContext = renderer.device._gl;
             
             // Enable dynamic atlas manager by default
-            cc.dynamicAtlasManager.enabled = true;
+            if (!cc.macro.CLEANUP_IMAGE_CACHE) {
+                cc.dynamicAtlasManager.enabled = true;
+            }
         }
         if (!this._renderContext) {
             this.renderType = this.RENDER_TYPE_CANVAS;
@@ -822,8 +824,8 @@ var game = {
         }
 
         if (CC_WECHATGAME && cc.sys.browserType !== cc.sys.BROWSER_TYPE_WECHAT_GAME_SUB) {
-            wx.onShow(onShown);
-            wx.onHide(onHidden);
+            wx.onShow && wx.onShow(onShown);
+            wx.onHide && wx.onHide(onHidden);
         }
 
         if ("onpageshow" in window && "onpagehide" in window) {

@@ -28,11 +28,9 @@ const misc = require('../utils/misc');
 const NodeEvent = require('../CCNode').EventType;
 const RenderComponent = require('./CCRenderComponent');
 const RenderFlow = require('../renderer/render-flow');
-const renderer = require('../renderer');
 const renderEngine = require('../renderer/render-engine');
 const SpriteMaterial = renderEngine.SpriteMaterial;
 const GraySpriteMaterial = renderEngine.GraySpriteMaterial;
-const RenderData = renderEngine.RenderData;
 
 /**
  * !#en Enum for sprite type.
@@ -213,10 +211,6 @@ var Sprite = cc.Class({
                     }
                 }
                 this._spriteFrame = value;
-                if ((this._material && this._material._texture) !== (value && value._texture)) {
-                    // disable render flow util texture is loaded
-                    this.markForRender(false);
-                }
                 // render & update render data flag will be triggered while applying new sprite frame
                 this.markForUpdateRenderData(false);
                 this._applySpriteFrame(lastSprite);
@@ -443,6 +437,10 @@ var Sprite = cc.Class({
         if (!this._spriteFrame || !this._spriteFrame.textureLoaded()) {
             // Do not render when sprite frame is not ready
             this.disableRender();
+            if (this._spriteFrame) {
+                this._spriteFrame.once('load', this._onTextureLoaded, this);
+                this._spriteFrame.ensureLoadTexture();
+            }
         }
         
         this._updateAssembler();
@@ -492,31 +490,33 @@ var Sprite = cc.Class({
             return;
         }
 
-        // Get material
-        let texture = spriteFrame.getTexture();
-        let material;
-        if (this._state === State.GRAY) {
-            if (!this._graySpriteMaterial) {
-                this._graySpriteMaterial = new GraySpriteMaterial();
-                this.node._renderFlag |= RenderFlow.FLAG_COLOR;
+        // WebGL
+        if (cc.game.renderType !== cc.game.RENDER_TYPE_CANVAS) {
+            // Get material
+            let texture = spriteFrame.getTexture();
+            let material;
+            if (this._state === State.GRAY) {
+                if (!this._graySpriteMaterial) {
+                    this._graySpriteMaterial = new GraySpriteMaterial();
+                    this.node._renderFlag |= RenderFlow.FLAG_COLOR;
+                }
+                material = this._graySpriteMaterial;
             }
-            material = this._graySpriteMaterial;
-        }
-        else {
-            if (!this._spriteMaterial) {
-                this._spriteMaterial = new SpriteMaterial();
-                this.node._renderFlag |= RenderFlow.FLAG_COLOR;
+            else {
+                if (!this._spriteMaterial) {
+                    this._spriteMaterial = new SpriteMaterial();
+                    this.node._renderFlag |= RenderFlow.FLAG_COLOR;
+                }
+                material = this._spriteMaterial;
             }
-            material = this._spriteMaterial;
-        }
-        // TODO: old texture in material have been released by loader
-        if (material.texture !== texture) {
-            material.texture = texture;
-            this._updateMaterial(material);
-        }
-
-        if (this._renderData) {
-            this._renderData.material = material;
+            // TODO: old texture in material have been released by loader
+            if (material.texture !== texture) {
+                material.texture = texture;
+                this._updateMaterial(material);
+            }
+            if (this._renderData) {
+                this._renderData.material = material;
+            }
         }
         
         this.markForUpdateRenderData(true);
@@ -587,6 +587,11 @@ var Sprite = cc.Class({
         }
 
         var spriteFrame = this._spriteFrame;
+        if (!spriteFrame || (this._material && this._material._texture) !== (spriteFrame && spriteFrame._texture)) {
+            // disable render flow until texture is loaded
+            this.markForRender(false);
+        }
+
         if (spriteFrame) {
             if (!oldFrame || spriteFrame._texture !== oldFrame._texture) {
                 if (spriteFrame.textureLoaded()) {
