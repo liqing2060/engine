@@ -67,7 +67,7 @@ let _sharedLabelData;
 //
 let _canvasPool = {
     pool: [],
-    get () {
+    get() {
         let data = this.pool.pop();
 
         if (!data) {
@@ -81,7 +81,7 @@ let _canvasPool = {
 
         return data;
     },
-    put (canvas) {
+    put(canvas) {
         if (this.pool.length >= 32) {
             return;
         }
@@ -92,7 +92,7 @@ let _canvasPool = {
 
 module.exports = {
 
-    _getAssemblerData () {
+    _getAssemblerData() {
         if (cc.game.renderType === cc.game.RENDER_TYPE_CANVAS) {
             _sharedLabelData = _canvasPool.get();
         }
@@ -109,13 +109,13 @@ module.exports = {
         return _sharedLabelData;
     },
 
-    _resetAssemblerData (assemblerData) {
+    _resetAssemblerData(assemblerData) {
         if (cc.game.renderType === cc.game.RENDER_TYPE_CANVAS && assemblerData) {
             _canvasPool.put(assemblerData);
         }
     },
 
-    updateRenderData (comp) {
+    updateRenderData(comp) {
         if (!comp._renderData.vertDirty) return;
 
         if (this._updateFontFamly(comp)) {
@@ -139,10 +139,10 @@ module.exports = {
         }
     },
 
-    _updateVerts () {
+    _updateVerts() {
     },
 
-    _updateFontFamly (comp) {
+    _updateFontFamly(comp) {
         if (!comp.useSystemFont) {
             if (!comp.font) return false;
 
@@ -173,12 +173,12 @@ module.exports = {
         return true;
     },
 
-    _updateProperties (comp) {
+    _updateProperties(comp) {
         let assemblerData = comp._assemblerData;
         _context = assemblerData.context;
         _canvas = assemblerData.canvas;
         _texture = comp._texture;
-        
+
         _string = comp.string.toString();
         _fontSize = comp._fontSize;
         _drawFontsize = _fontSize;
@@ -204,7 +204,8 @@ module.exports = {
         }
 
         // outline
-        let outline = (LabelOutline instanceof cc.Component) && comp.getComponent(LabelOutline);
+        // let outline = (LabelOutline instanceof cc.Component) && comp.getComponent(LabelOutline);
+        let outline = comp.getComponent(LabelOutline);
         if (outline && outline.enabled) {
             _isOutlined = true;
             _margin = _outlineWidth = outline.width;
@@ -218,7 +219,7 @@ module.exports = {
         }
     },
 
-    _calculateFillTextStartPosition () {
+    _calculateFillTextStartPosition() {
         let lineHeight = this._getLineHeight();
         let lineCount = _splitedStrings.length;
         let labelX;
@@ -247,7 +248,7 @@ module.exports = {
         return cc.v2(labelX, firstLinelabelY);
     },
 
-    _updateTexture () {
+    _updateTexture() {
         _context.clearRect(0, 0, _canvas.width, _canvas.height);
         _context.font = _fontDesc;
 
@@ -284,7 +285,7 @@ module.exports = {
         _texture.handleLoadedTexture();
     },
 
-    _calculateUnderlineStartPosition () {
+    _calculateUnderlineStartPosition() {
         let lineHeight = this._getLineHeight();
         let lineCount = _splitedStrings.length;
         let labelX;
@@ -305,7 +306,7 @@ module.exports = {
         return cc.v2(labelX, firstLinelabelY);
     },
 
-    _updateLabelDimensions () {
+    _updateLabelDimensions() {
         let paragraphedStrings = _string.split('\n');
 
         if (_overflow === Overflow.RESIZE_HEIGHT) {
@@ -333,7 +334,7 @@ module.exports = {
         _canvas.height = _canvasSize.height;
     },
 
-    _calculateTextBaseline () {
+    _calculateTextBaseline() {
         let node = this._node;
         let hAlign;
         let vAlign;
@@ -361,7 +362,7 @@ module.exports = {
         _context.textBaseline = vAlign;
     },
 
-    _calculateSplitedStrings () {
+    _calculateSplitedStrings() {
         let paragraphedStrings = _string.split('\n');
 
         if (_isWrapText) {
@@ -370,9 +371,9 @@ module.exports = {
             for (let i = 0; i < paragraphedStrings.length; ++i) {
                 let allWidth = TextUtils.safeMeasureText(_context, paragraphedStrings[i]);
                 let textFragment = TextUtils.fragmentText(paragraphedStrings[i],
-                                                        allWidth,
-                                                        canvasWidthNoMargin,
-                                                        this._measureText(_context));
+                    allWidth,
+                    canvasWidthNoMargin,
+                    this._measureText(_context));
                 _splitedStrings = _splitedStrings.concat(textFragment);
             }
         }
@@ -382,7 +383,7 @@ module.exports = {
 
     },
 
-    _getFontDesc () {
+    _getFontDesc() {
         let fontDesc = _fontSize.toString() + 'px ';
         fontDesc = fontDesc + _fontFamily;
         if (_isBold) {
@@ -392,7 +393,7 @@ module.exports = {
         return fontDesc;
     },
 
-    _getLineHeight () {
+    _getLineHeight() {
         let nodeSpacingY = _lineHeight;
         if (nodeSpacingY === 0) {
             nodeSpacingY = _fontSize;
@@ -403,7 +404,7 @@ module.exports = {
         return nodeSpacingY | 0;
     },
 
-    _calculateParagraphLength (paragraphedStrings, ctx) {
+    _calculateParagraphLength(paragraphedStrings, ctx) {
         let paragraphLength = [];
 
         for (let i = 0; i < paragraphedStrings.length; ++i) {
@@ -414,20 +415,20 @@ module.exports = {
         return paragraphLength;
     },
 
-    _measureText (ctx) {
+    _measureText(ctx) {
         return function (string) {
             return TextUtils.safeMeasureText(ctx, string);
         };
     },
 
-    _calculateLabelFont () {
+    _calculateLabelFont() {
         _fontDesc = this._getFontDesc();
         _context.font = _fontDesc;
 
         if (_overflow === Overflow.SHRINK) {
             let paragraphedStrings = _string.split('\n');
             let paragraphLength = this._calculateParagraphLength(paragraphedStrings, _context);
-        
+
             _splitedStrings = paragraphedStrings;
             let i = 0;
             let totalHeight = 0;
@@ -469,9 +470,9 @@ module.exports = {
                         let j = 0;
                         let allWidth = TextUtils.safeMeasureText(_context, paragraphedStrings[i]);
                         textFragment = TextUtils.fragmentText(paragraphedStrings[i],
-                                                            allWidth,
-                                                            canvasWidthNoMargin,
-                                                            this._measureText(_context));
+                            allWidth,
+                            canvasWidthNoMargin,
+                            this._measureText(_context));
                         while (j < textFragment.length) {
                             let measureWidth = TextUtils.safeMeasureText(_context, textFragment[j]);
                             maxLength = measureWidth;

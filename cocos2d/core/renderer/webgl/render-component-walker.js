@@ -55,10 +55,10 @@ var RenderComponentWalker = function (device, renderScene) {
     this._device = device;
     this._stencilMgr = StencilManager.sharedManager;
 
+    this.walking = false;
     this.material = empty_material;
     this.cullingMask = 1;
 
-    let defaultFormat = new gfx.VertexFormat([]);
     this._iaPool = new RecyclePool(function () {
         return new InputAssembler();
     }, 16);
@@ -129,7 +129,7 @@ RenderComponentWalker.prototype = {
             indiceStart = buffer.indiceStart,
             indiceOffset = buffer.indiceOffset,
             indiceCount = indiceOffset - indiceStart;
-        if (!material || indiceCount <= 0) {
+        if (!this.walking || !material || indiceCount <= 0) {
             return;
         }
 
@@ -210,6 +210,7 @@ RenderComponentWalker.prototype = {
 
     visit (scene) {
         this.reset();
+        this.walking = true;
 
         RenderFlow.render(scene);
         
@@ -219,6 +220,7 @@ RenderComponentWalker.prototype = {
         for (let key in _buffers) {
             _buffers[key].uploadData();
         }
+        this.walking = false;
     },
 
     getBuffer (type, vertextFormat) {
