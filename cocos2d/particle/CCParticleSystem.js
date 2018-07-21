@@ -249,6 +249,10 @@ var properties = {
      * @type {String}
      * @readonly
      */
+    _texture: {
+        default: null,
+        type: cc.Texture2D
+    },
     texture: {
         get: function () {
             return this._texture;
@@ -305,8 +309,14 @@ var properties = {
      * !#zh 粒子播放完毕后自动销毁所在的节点。
      * @property {Boolean} autoRemoveOnFinish
      */
+    _autoRemoveOnFinish: false,
     autoRemoveOnFinish: {
-        default: false,
+        get () {
+            return this._autoRemoveOnFinish;
+        },
+        set (val) {
+            this._autoRemoveOnFinish = val;
+        },
         animatable: false,
         tooltip: CC_DEV && 'i18n:COMPONENT.particle_system.autoRemoveOnFinish'
     },
@@ -330,35 +340,75 @@ var properties = {
      * @property {Number} totalParticles
      * @default 150
      */
-    totalParticles: 150,
+    _totalParticles: 150,
+    totalParticles: {
+        get () {
+            return this._totalParticles;
+        },
+        set (val) {
+            this._totalParticles = val;
+        }
+    },
     /**
      * !#en How many seconds the emitter wil run. -1 means 'forever'.
      * !#zh 发射器生存时间，单位秒，-1表示持续发射。
      * @property {Number} duration
      * @default ParticleSystem.DURATION_INFINITY
      */
-    duration: -1,
+    _duration: -1,
+    duration: {
+        get () {
+            return this._duration;
+        },
+        set (val) {
+            this._duration = val;
+        }
+    },
     /**
      * !#en Emission rate of the particles.
      * !#zh 每秒发射的粒子数目。
      * @property {Number} emissionRate
      * @default 10
      */
-    emissionRate: 10,
+    _emissionRate: 10,
+    emissionRate: {
+        get () {
+            return this._emissionRate;
+        },
+        set (val) {
+            this._emissionRate = val;
+        }
+    },
     /**
      * !#en Life of each particle setter.
      * !#zh 粒子的运行时间。
      * @property {Number} life
      * @default 1
      */
-    life: 1,
+    _life: 1,
+    life: {
+        get () {
+            return this._life;
+        },
+        set (val) {
+            this._life = val;
+        }
+    },
     /**
      * !#en Variation of life.
      * !#zh 粒子的运行时间变化范围。
      * @property {Number} lifeVar
      * @default 0
      */
-    lifeVar: 0,
+    _lifeVar: 0,
+    lifeVar: {
+        get () {
+            return this._lifeVar;
+        },
+        set (val) {
+            this._lifeVar = val;
+        }
+    },
 
     /**
      * !#en Start color of each particle.
@@ -439,78 +489,165 @@ var properties = {
      * @property {Number} angle
      * @default 90
      */
-    angle: 90,
+    _angle: 90,
+    angle: {
+        get () {
+            return this._angle;
+        },
+        set (val) {
+            this._angle = val;
+        }
+    },
     /**
      * !#en Variation of angle of each particle setter.
      * !#zh 粒子角度变化范围。
      * @property {Number} angleVar
      * @default 20
      */
-    angleVar: 20,
+    _angleVar: 20,
+    angleVar: {
+        get () {
+            return this._angleVar;
+        },
+        set (val) {
+            this._angleVar = val;
+        }
+    },
     /**
      * !#en Start size in pixels of each particle.
      * !#zh 粒子的初始大小。
      * @property {Number} startSize
      * @default 50
      */
-    startSize: 50,
+    _startSize: 50,
+    startSize: {
+        get () {
+            return this._startSize;
+        },
+        set (val) {
+            this._startSize = val;
+        }
+    },
     /**
      * !#en Variation of start size in pixels.
      * !#zh 粒子初始大小的变化范围。
      * @property {Number} startSizeVar
      * @default 0
      */
-    startSizeVar: 0,
+    _startSizeVar: 0,
+    startSizeVar: {
+        get () {
+            return this._startSizeVar;
+        },
+        set (val) {
+            this._startSizeVar = val;
+        }
+    },
     /**
      * !#en End size in pixels of each particle.
      * !#zh 粒子结束时的大小。
      * @property {Number} endSize
      * @default 0
      */
-    endSize: 0,
+    _endSize: 0,
+    endSize: {
+        get () {
+            return this._endSize;
+        },
+        set (val) {
+            this._endSize = val;
+        }
+    },
     /**
      * !#en Variation of end size in pixels.
      * !#zh 粒子结束大小的变化范围。
      * @property {Number} endSizeVar
      * @default 0
      */
-    endSizeVar: 0,
+    _endSizeVar: 0,
+    endSizeVar: {
+        get () {
+            return this._endSizeVar;
+        },
+        set (val) {
+            this._endSizeVar = val;
+        }
+    },
     /**
      * !#en Start angle of each particle.
      * !#zh 粒子开始自旋角度。
      * @property {Number} startSpin
      * @default 0
      */
-    startSpin: 0,
+    _startSpin: 0,
+    startSpin: {
+        get () {
+            return this._startSpin;
+        },
+        set (val) {
+            this._startSpin = val;
+        }
+    },
     /**
      * !#en Variation of start angle.
      * !#zh 粒子开始自旋角度变化范围。
      * @property {Number} startSpinVar
      * @default 0
      */
-    startSpinVar: 0,
+    _startSpinVar: 0,
+    startSpinVar: {
+        get () {
+            return this._startSpinVar;
+        },
+        set (val) {
+            this._startSpinVar = val;
+        }
+    },
     /**
      * !#en End angle of each particle.
      * !#zh 粒子结束自旋角度。
      * @property {Number} endSpin
      * @default 0
      */
-    endSpin: 0,
+    _endSpin: 0,
+    endSpin: {
+        get () {
+            return this._endSpin;
+        },
+        set (val) {
+            this._endSpin = val;
+        }
+    },
     /**
      * !#en Variation of end angle.
      * !#zh 粒子结束自旋角度变化范围。
      * @property {Number} endSpinVar
      * @default 0
      */
-    endSpinVar: 0,
-
+    _endSpinVar: 0,
+    endSpinVar: {
+        get () {
+            return this._endSpinVar;
+        },
+        set (val) {
+            this._endSpinVar = val;
+        }
+    },
     /**
      * !#en Source position of the emitter.
      * !#zh 发射器位置。
      * @property {Vec2} sourcePos
      * @default cc.Vec2.ZERO
      */
-    sourcePos: cc.v2(0, 0),
+    _sourcePos: cc.v2(0, 0),
+    sourcePos: {
+        get () {
+            return this._sourcePos;
+        },
+        set (val) {
+            this._sourcePos = val;
+        }
+    },
 
     /**
      * !#en Variation of source position.
@@ -518,7 +655,15 @@ var properties = {
      * @property {Vec2} posVar
      * @default cc.Vec2.ZERO
      */
-    posVar: cc.v2(0, 0),
+    _posVar: cc.v2(0, 0),
+    posVar: {
+        get () {
+            return this._posVar;
+        },
+        set (val) {
+            this._posVar = val;
+        }
+    },
 
     /**
      * !#en Particles movement type.
@@ -526,9 +671,17 @@ var properties = {
      * @property {ParticleSystem.PositionType} positionType
      * @default ParticleSystem.PositionType.FREE
      */
-    positionType: {
+    _positionType: {
         default: PositionType.FREE,
         type: PositionType
+    },
+    positionType: {
+        get () {
+            return this._positionType;
+        },
+        set (val) {
+            this._positionType = val;
+        }
     },
 
     /**
@@ -537,9 +690,17 @@ var properties = {
      * @property {ParticleSystem.EmitterMode} emitterMode
      * @default ParticleSystem.EmitterMode.GRAVITY
      */
-    emitterMode: {
+    _emitterMode: {
         default: EmitterMode.GRAVITY,
         type: EmitterMode
+    },
+    emitterMode: {
+        get () {
+            return this._emitterMode;
+        },
+        set (val) {
+            this._emitterMode = val;
+        }
     },
 
     // GRAVITY MODE
@@ -550,49 +711,105 @@ var properties = {
      * @property {Vec2} gravity
      * @default cc.Vec2.ZERO
      */
-    gravity: cc.v2(0, 0),
+    _gravity: cc.v2(0, 0),
+    gravity: {
+        get () {
+            return this._gravity;
+        },
+        set (val) {
+            this._gravity = val;
+        }
+    },
     /**
      * !#en Speed of the emitter.
      * !#zh 速度。
      * @property {Number} speed
      * @default 180
      */
-    speed: 180,
+    _speed: 180,
+    speed: {
+        get () {
+            return this._speed;
+        },
+        set (val) {
+            this._speed = val;
+        }
+    },
     /**
      * !#en Variation of the speed.
      * !#zh 速度变化范围。
      * @property {Number} speedVar
      * @default 50
      */
-    speedVar: 50,
+    _speedVar: 50,
+    speedVar: {
+        get () {
+            return this._speedVar;
+        },
+        set (val) {
+            this._speedVar = val;
+        }
+    },
     /**
      * !#en Tangential acceleration of each particle. Only available in 'Gravity' mode.
      * !#zh 每个粒子的切向加速度，即垂直于重力方向的加速度，只有在重力模式下可用。
      * @property {Number} tangentialAccel
      * @default 80
      */
-    tangentialAccel: 80,
+    _tangentialAccel: 80,
+    tangentialAccel: {
+        get () {
+            return this._tangentialAccel;
+        },
+        set (val) {
+            this._tangentialAccel = val;
+        }
+    },
     /**
      * !#en Variation of the tangential acceleration.
      * !#zh 每个粒子的切向加速度变化范围。
      * @property {Number} tangentialAccelVar
      * @default 0
      */
-    tangentialAccelVar: 0,
+    _tangentialAccelVar: 0,
+    tangentialAccelVar: {
+        get () {
+            return this._tangentialAccelVar;
+        },
+        set (val) {
+            this._tangentialAccelVar = val;
+        }
+    },
     /**
      * !#en Acceleration of each particle. Only available in 'Gravity' mode.
      * !#zh 粒子径向加速度，即平行于重力方向的加速度，只有在重力模式下可用。
      * @property {Number} radialAccel
      * @default 0
      */
-    radialAccel: 0,
+    _radialAccel: 0,
+    radialAccel: {
+        get () {
+            return this._radialAccel;
+        },
+        set (val) {
+            this._radialAccel = val;
+        }
+    },
     /**
      * !#en Variation of the radial acceleration.
      * !#zh 粒子径向加速度变化范围。
      * @property {Number} radialAccelVar
      * @default 0
      */
-    radialAccelVar: 0,
+    _radialAccelVar: 0,
+    radialAccelVar: {
+        get () {
+            return this._radialAccel;
+        },
+        set (val) {
+            this._radialAccel = val;
+        }
+    },
 
     /**
      * !#en Indicate whether the rotation of each particle equals to its direction. Only available in 'Gravity' mode.
@@ -600,7 +817,15 @@ var properties = {
      * @property {Boolean} rotationIsDir
      * @default false
      */
-    rotationIsDir: false,
+    _rotationIsDir: false,
+    rotationIsDir: {
+        get () {
+            return this._rotationIsDir;
+        },
+        set (val) {
+            this._rotationIsDir = val;
+        }
+    },
 
     // RADIUS MODE
 
@@ -610,42 +835,90 @@ var properties = {
      * @property {Number} startRadius
      * @default 0
      */
-    startRadius: 0,
+    _startRadius: 0,
+    startRadius: {
+        get () {
+            return this._startRadius;
+        },
+        set (val) {
+            this._startRadius = val;
+        }
+    },
     /**
      * !#en Variation of the starting radius.
      * !#zh 初始半径变化范围。
      * @property {Number} startRadiusVar
      * @default 0
      */
-    startRadiusVar: 0,
+    _startRadiusVar: 0,
+    startRadiusVar: {
+        get () {
+            return this._startRadiusVar;
+        },
+        set (val) {
+            this._startRadiusVar = val;
+        }
+    },
     /**
      * !#en Ending radius of the particles. Only available in 'Radius' mode.
      * !#zh 结束半径，只有在半径模式下可用。
      * @property {Number} endRadius
      * @default 0
      */
-    endRadius: 0,
+    _endRadius: 0,
+    endRadius: {
+        get () {
+            return this._endRadius;
+        },
+        set (val) {
+            this._endRadius = val;
+        }
+    },
     /**
      * !#en Variation of the ending radius.
      * !#zh 结束半径变化范围。
      * @property {Number} endRadiusVar
      * @default 0
      */
-    endRadiusVar: 0,
+    _endRadiusVar: 0,
+    endRadiusVar: {
+        get () {
+            return this._endRadiusVar;
+        },
+        set (val) {
+            this._endRadiusVar = val;
+        }
+    },
     /**
      * !#en Number of degress to rotate a particle around the source pos per second. Only available in 'Radius' mode.
      * !#zh 粒子每秒围绕起始点的旋转角度，只有在半径模式下可用。
      * @property {Number} rotatePerS
      * @default 0
      */
-    rotatePerS: 0,
+    _rotatePerS: 0,
+    rotatePerS: {
+        get () {
+            return this._rotatePerS;
+        },
+        set (val) {
+            this._rotatePerS = val;
+        }
+    },
     /**
      * !#en Variation of the degress to rotate a particle around the source pos per second.
      * !#zh 粒子每秒围绕起始点的旋转角度变化范围。
      * @property {Number} rotatePerSVar
      * @default 0
      */
-    rotatePerSVar: 0
+    _rotatePerSVar: 0,
+    rotatePerSVar: {
+        get () {
+            return this._rotatePerSVar;
+        },
+        set (val) {
+            this._rotatePerSVar = val;
+        }
+    }
 };
 
 /**
@@ -793,16 +1066,18 @@ var ParticleSystem = cc.Class({
     // LIFE-CYCLE METHODS
 
     __preload: function () {
-        if (this._file) { 
-            if (this._custom) { 
-                var missCustomTexture = !this._texture; 
-                if (missCustomTexture) { 
-                    this._applyFile();
+        if (this._custom) {
+            var hasCustomSprite = this._spriteFrame !== null
+            var hasCustomTexture = this._texture !== null;
+            // if customSprite continue
+            if(!hasCustomSprite) {
+                if(hasCustomTexture) {
+                    // down to load texture from v1.9
+                    this.spriteFrame = new cc.SpriteFrame(this._texture);
                 }
             }
-            else {
-                this._applyFile();
-            }
+        } else if (this._file) {
+            this._applyFile();
         }
         // auto play
         if (!CC_EDITOR || cc.engine.isPlaying) {
