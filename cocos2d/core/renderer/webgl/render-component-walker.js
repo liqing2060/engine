@@ -123,6 +123,11 @@ RenderComponentWalker.prototype = {
         this._stencilMgr.reset();
     },
 
+    clearPools () {
+        this._iaPool.resetToInit();
+        this._modelPool.resetToInit();
+    },
+
     _flush () {
         let material = this.material,
             buffer = this._buffer,

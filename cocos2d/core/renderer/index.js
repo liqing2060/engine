@@ -170,5 +170,10 @@ module.exports = {
     clear () {
         this._walker.reset();
         this._forward._reset();
-    }
+    },
+
+    clearPools () {
+        this._walker.clearPools();
+        this._forward.clearPools();
+    },
 };
