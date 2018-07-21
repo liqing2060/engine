@@ -66,37 +66,39 @@ module.exports = {
         let vbuf = buffer._vData;
 
         // get uv from sprite frame directly
-        let uv = sprite._spriteFrame.uv;
-        vbuf[vertexOffset+2] = uv[0];
-        vbuf[vertexOffset+3] = uv[1];
-        vbuf[vertexOffset+6] = uv[2];
-        vbuf[vertexOffset+7] = uv[3];
-        vbuf[vertexOffset+10] = uv[4];
-        vbuf[vertexOffset+11] = uv[5];
-        vbuf[vertexOffset+14] = uv[6];
-        vbuf[vertexOffset+15] = uv[7];
+        if (sprite._spriteFrame && sprite._spriteFrame.uv) {
+            let uv = sprite._spriteFrame.uv;
+            vbuf[vertexOffset+2] = uv[0];
+            vbuf[vertexOffset+3] = uv[1];
+            vbuf[vertexOffset+6] = uv[2];
+            vbuf[vertexOffset+7] = uv[3];
+            vbuf[vertexOffset+10] = uv[4];
+            vbuf[vertexOffset+11] = uv[5];
+            vbuf[vertexOffset+14] = uv[6];
+            vbuf[vertexOffset+15] = uv[7];
 
-        let data0 = data[0], data3 = data[3],
-            vl = data0.x, vr = data3.x,
-            vb = data0.y, vt = data3.y;
-
-        let al = a * vl, ar = a * vr,
-            bl = b * vl, br = b * vr,
-            cb = c * vb, ct = c * vt,
-            db = d * vb, dt = d * vt;
-
-        // left bottom
-        vbuf[vertexOffset] = al + cb + tx;
-        vbuf[vertexOffset+1] = bl + db + ty;
-        // right bottom
-        vbuf[vertexOffset+4] = ar + cb + tx;
-        vbuf[vertexOffset+5] = br + db + ty;
-        // left top
-        vbuf[vertexOffset+8] = al + ct + tx;
-        vbuf[vertexOffset+9] = bl + dt + ty;
-        // right top
-        vbuf[vertexOffset+12] = ar + ct + tx;
-        vbuf[vertexOffset+13] = br + dt + ty;
+            let data0 = data[0], data3 = data[3],
+                vl = data0.x, vr = data3.x,
+                vb = data0.y, vt = data3.y;
+    
+            let al = a * vl, ar = a * vr,
+                bl = b * vl, br = b * vr,
+                cb = c * vb, ct = c * vt,
+                db = d * vb, dt = d * vt;
+    
+            // left bottom
+            vbuf[vertexOffset] = al + cb + tx;
+            vbuf[vertexOffset+1] = bl + db + ty;
+            // right bottom
+            vbuf[vertexOffset+4] = ar + cb + tx;
+            vbuf[vertexOffset+5] = br + db + ty;
+            // left top
+            vbuf[vertexOffset+8] = al + ct + tx;
+            vbuf[vertexOffset+9] = bl + dt + ty;
+            // right top
+            vbuf[vertexOffset+12] = ar + ct + tx;
+            vbuf[vertexOffset+13] = br + dt + ty;
+        }
     },
 
     createData (sprite) {
