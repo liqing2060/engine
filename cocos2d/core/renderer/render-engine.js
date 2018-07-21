@@ -12609,6 +12609,7 @@ var RecyclePool = function RecyclePool(fn, size) {
   this._fn = fn;
   this._count = 0;
   this._data = new Array(size);
+  this._initSize = size;
 
   for (var i = 0; i < size; ++i) {
     this$1._data[i] = fn();
@@ -12636,6 +12637,15 @@ RecyclePool.prototype.resize = function resize (size) {
     for (var i = this._data.length; i < size; ++i) {
       this$1._data[i] = this$1._fn();
     }
+  } else if (size < this._data.length) {
+    if (this._count > size) {
+      size = this._count;
+    }
+    for (var i = size; i < this._data.length; ++i) {
+      this$1._data[i] = null;
+    }
+    // console.log(`resize pool from ${this._data.length} to ${size}`);
+    this._data.length = size;
   }
 };
 
@@ -12661,6 +12671,10 @@ RecyclePool.prototype.remove = function remove (idx) {
 
 RecyclePool.prototype.sort = function sort$1 (cmp) {
   return sort(this._data, 0, this._count, cmp);
+};
+
+RecyclePool.prototype.resetToInit = function resetToInit$1 (cmp) {
+  return this.resize(this._initSize);
 };
 
 Object.defineProperties( RecyclePool.prototype, prototypeAccessors$9 );
@@ -13236,6 +13250,14 @@ var Base = function Base(device, opts) {
   }, 16);
 };
 
+Base.prototype.clearPools = function clearPools() {
+  this._drawItemsPools.resetToInit();
+  for (let index = 0; index < this._stageItemsPools._data.length; index++) {
+    const pool = this._stageItemsPools._data[index];
+    pool.resetToInit();
+  }
+},
+
 Base.prototype._resetTextuerUnit = function _resetTextuerUnit () {
   this._usedTextureUnits = 0;
 };
@@ -13764,7 +13786,7 @@ var RenderData = (function (BaseRenderData$$1) {
 
   RenderData.free = function free (data) {
     if (data instanceof RenderData) {
-      for (var i = data._data.length-1; i > 0; i--) {
+      for (var i = data._data.length-1; i >= 0; i--) {
         _dataPool.free(data._data[i]);
       }
       data._data.length = 0;
