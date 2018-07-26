@@ -529,6 +529,7 @@ let Label = cc.Class({
         else {
             if (!this._ttfTexture) {
                 this._ttfTexture = new cc.Texture2D();
+                this._ttfTexture.setPremultiplyAlpha(true);
                 this._assemblerData = this._assembler._getAssemblerData();
                 this._ttfTexture.initWithElement(this._assemblerData.canvas);
             }
@@ -543,6 +544,10 @@ let Label = cc.Class({
         else {
             if (!material) {
                 material = new SpriteMaterial();
+            }
+            // Setup blend function for premultiplied ttf label texture
+            if (this._texture === this._ttfTexture) {
+                this._srcBlendFactor = cc.macro.ONE;
             }
             material.texture = this._texture;
             this._updateMaterial(material);

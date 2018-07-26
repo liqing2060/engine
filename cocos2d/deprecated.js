@@ -219,7 +219,7 @@ if (CC_DEV) {
         getAnimationInterval: 'cc.game.getFrameRate',
         setAnimationInterval: 'cc.game.setFrameRate',
         isDisplayStats: 'cc.debug.isDisplayStats',
-        showDisplayStats: 'cc.debug.showDisplayStats',
+        setDisplayStats: 'cc.debug.setDisplayStats',
     }, 'cc.Director');
     markAsRemoved(cc.Director, [
         'pushScene',
@@ -366,7 +366,7 @@ if (CC_DEV) {
 
     // SCENE
     var ERR = '"%s" is not defined in the Scene, it is only defined in normal nodes.';
-    Object.defineProperties(cc.Scene.prototype, {
+    CC_EDITOR || Object.defineProperties(cc.Scene.prototype, {
         active: {
             get: function () {
                 cc.error(ERR, 'active');
