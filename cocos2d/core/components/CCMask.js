@@ -368,6 +368,14 @@ let Mask = cc.Class({
         // for graphic stencil data
         this._graphics = null;
 
+        if (!this._spriteFrame || !this._spriteFrame.textureLoaded()) {
+            // Do not render when sprite frame is not ready
+            if (this._spriteFrame) {
+                this._spriteFrame.once('load', this._onTextureLoaded, this);
+                this._spriteFrame.ensureLoadTexture();
+            }
+        }
+
         this.node._renderFlag |= RenderFlow.FLAG_POST_RENDER | RenderFlow.FLAG_POST_UPDATE_RENDER_DATA;
         this._activateMaterial();
     },
