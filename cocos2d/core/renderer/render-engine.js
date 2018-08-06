@@ -12849,7 +12849,7 @@ var ProgramLib = function ProgramLib(device, templates, chunks) {
   if ( chunks === void 0 ) chunks = {};
 
   this._device = device;
-  this._precision = "precision highp float;\n";
+  this._precision = "precision mediump float;\n";
 
   // register templates
   this._templates = {};

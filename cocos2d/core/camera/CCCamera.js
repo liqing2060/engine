@@ -500,7 +500,7 @@ let Camera = cc.Class({
         renderer._forward.renderCamera(this._camera, renderer.scene);
     },
 
-    beforeDraw: !CC_EDITOR && function () {
+    beforeDraw: function () {
         let node = this.node;
         
         if (!this._matrixDirty && !node._worldMatDirty)
@@ -510,7 +510,7 @@ let Camera = cc.Class({
         let fov = Math.atan(Math.tan(this._fov/2) / this.zoomRatio)*2;
         camera.setFov(fov);
 
-        let height = cc.visibleRect.height;
+        let height = cc.game.canvas.height / cc.view._scaleY;
 
         let targetTexture = this._targetTexture;
         if (targetTexture) {
