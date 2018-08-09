@@ -1228,7 +1228,9 @@ var Node = cc.Class({
         }
         this._renderFlag |= RenderFlow.FLAG_WORLD_TRANSFORM;
         this._onHierarchyChangedBase(oldParent);
-        cc._widgetManager._nodesOrderDirty = true;
+        if (cc._widgetManager) {
+            cc._widgetManager._nodesOrderDirty = true;
+        }
     },
 
     // INTERNAL
@@ -2528,14 +2530,14 @@ var Node = cc.Class({
     
     /**
      * !#en
-     * Get the local transform matrix (4x4), based on parent node coordinates
-     * !#zh 返回局部空间坐标系的矩阵，基于父节点坐标系。
-     * @method getLocalMatrix
+     * Get the world transform matrix (4x4)
+     * !#zh 返回世界空间坐标系的矩阵。
+     * @method getWorldMatrix
      * @param {vmath.Mat4} out The matrix object to be filled with data
      * @return {vmath.Mat4} Same as the out matrix object
      * @example
      * let mat4 = vmath.mat4.create();
-     * node.getLocalMatrix(mat4);
+     * node.getWorldMatrix(mat4);
      */
     getWorldMatrix (out) {
         this._updateWorldMatrix();
