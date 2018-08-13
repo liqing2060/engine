@@ -479,7 +479,11 @@ function registerInputEventListener (tmpEdTxt, editBoxImpl, isTextarea) {
 
     cbs.focus = function () {
         this.style.fontSize = editBoxImpl._edFontSize + 'px';
-        this.style.color = editBoxImpl._textColor.toHEX();
+        this.style.color = editBoxImpl._textColor.toCSS('#rrggbbaa');
+        // When stayOnTop, input will swallow touch event
+        if (editBoxImpl._alwaysOnTop) {
+            editBoxImpl._editing = true;
+        }
 
         if (cc.sys.isMobile) {
             editBoxImpl._onFocusOnMobile();
