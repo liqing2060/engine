@@ -87,7 +87,8 @@ let maskFrontAssembler = {
 
         mask._material = mask._frontMaterial;
         if (mask._type === Mask.Type.IMAGE_STENCIL) {
-            if (mask.spriteFrame) {
+            if (mask._material && mask.spriteFrame) {
+                mask._material.useModel = false;
                 renderData.dataLength = 4;
                 spriteAssembler.updateRenderData(mask);
                 renderData.material = mask.getMaterial();
@@ -135,6 +136,9 @@ let maskEndAssembler = {
         }
         let material = mask._material;
 
+        if (!material) {
+            return;
+        }
         if (mask._type === Mask.Type.IMAGE_STENCIL) {
             let data = mask._renderData;
             data.material = material;
