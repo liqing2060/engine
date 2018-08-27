@@ -9497,9 +9497,9 @@ var Device = function Device(canvasEL, opts) {
 
   try {
     gl = canvasEL.getContext('webgl', opts)
-      || canvasEL.getContext('experimental-webgl', opts)
-      || canvasEL.getContext('webkit-3d', opts)
-      || canvasEL.getContext('moz-webgl', opts);
+     || canvasEL.getContext('experimental-webgl', opts)
+     || canvasEL.getContext('webkit-3d', opts)
+     || canvasEL.getContext('moz-webgl', opts);
   } catch (err) {
     console.error(err);
     return;
@@ -9561,16 +9561,13 @@ Device.prototype._initExtensions = function _initExtensions (extensions) {
   for (var i = 0; i < extensions.length; ++i) {
     var name = extensions[i];
 
-    var vendorPrefixes = ["", "WEBKIT_", "MOZ_"];
-    for (var j = 0; j < vendorPrefixes.length; j++) {
-      try {
-        var ext = gl.getExtension(vendorPrefixes[j] + name);
-        if (ext) {
-          this$1._extensions[name] = ext;
-        }
-      } catch (e) {
-        console.error(e);
+    try {
+      var ext = gl.getExtension(name);
+      if (ext) {
+        this$1._extensions[name] = ext;
       }
+    } catch (e) {
+      console.error(e);
     }
   }
 };
@@ -9642,12 +9639,7 @@ Device.prototype._restoreIndexBuffer = function _restoreIndexBuffer () {
   var gl = this._gl;
 
   var ib = this._current.indexBuffer;
-  if (ib && ib._glID !== -1) {
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib._glID);
-  }
-  else {
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-  }
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib ? ib._glID : null);
 };
 
 /**
@@ -12620,6 +12612,7 @@ var RecyclePool = function RecyclePool(fn, size) {
   this._fn = fn;
   this._count = 0;
   this._data = new Array(size);
+  this._initSize = size;
 
   for (var i = 0; i < size; ++i) {
     this$1._data[i] = fn();
@@ -12647,6 +12640,15 @@ RecyclePool.prototype.resize = function resize (size) {
     for (var i = this._data.length; i < size; ++i) {
       this$1._data[i] = this$1._fn();
     }
+  } else if (size < this._data.length) {
+    if (this._count > size) {
+      size = this._count;
+    }
+    for (var i = size; i < this._data.length; ++i) {
+      this$1._data[i] = null;
+    }
+    // console.log(`resize pool from ${this._data.length} to ${size}`);
+    this._data.length = size;
   }
 };
 
@@ -12672,6 +12674,10 @@ RecyclePool.prototype.remove = function remove (idx) {
 
 RecyclePool.prototype.sort = function sort$1 (cmp) {
   return sort(this._data, 0, this._count, cmp);
+};
+
+RecyclePool.prototype.resetToInit = function resetToInit$1 (cmp) {
+  return this.resize(this._initSize);
 };
 
 Object.defineProperties( RecyclePool.prototype, prototypeAccessors$9 );
@@ -12846,7 +12852,7 @@ var ProgramLib = function ProgramLib(device, templates, chunks) {
   if ( chunks === void 0 ) chunks = {};
 
   this._device = device;
-  this._precision = "precision highp float;\n";
+  this._precision = "precision mediump float;\n";
 
   // register templates
   this._templates = {};
@@ -13246,6 +13252,14 @@ var Base = function Base(device, opts) {
     }, 100);
   }, 16);
 };
+
+Base.prototype.clearPools = function clearPools() {
+  this._drawItemsPools.resetToInit();
+  for (let index = 0; index < this._stageItemsPools._data.length; index++) {
+    const pool = this._stageItemsPools._data[index];
+    pool.resetToInit();
+  }
+},
 
 Base.prototype._resetTextuerUnit = function _resetTextuerUnit () {
   this._usedTextureUnits = 0;
@@ -13659,15 +13673,15 @@ var chunks = {
 var templates = [
   {
     name: 'gray_sprite',
-    vert: '\n \nuniform mat4 viewProj;\nattribute vec3 a_position;\nattribute mediump vec2 a_uv0;\nvarying mediump vec2 uv0;\nvoid main () {\n  vec4 pos = viewProj * vec4(a_position, 1);\n  gl_Position = pos;\n  uv0 = a_uv0;\n}',
-    frag: '\n \nuniform sampler2D texture;\nvarying mediump vec2 uv0;\nuniform lowp vec4 color;\nvoid main () {\n  vec4 c = color * texture2D(texture, uv0);\n  float gray = 0.2126*c.r + 0.7152*c.g + 0.0722*c.b;\n  gl_FragColor = vec4(gray, gray, gray, c.a);\n}',
+    vert: '\n \nuniform mat4 viewProj;\nattribute vec3 a_position;\nattribute vec2 a_uv0;\nvarying vec2 uv0;\nvoid main () {\n  vec4 pos = viewProj * vec4(a_position, 1);\n  gl_Position = pos;\n  uv0 = a_uv0;\n}',
+    frag: '\n \nuniform sampler2D texture;\nvarying vec2 uv0;\nuniform vec4 color;\nvoid main () {\n  vec4 c = color * texture2D(texture, uv0);\n  float gray = 0.2126*c.r + 0.7152*c.g + 0.0722*c.b;\n  gl_FragColor = vec4(gray, gray, gray, c.a);\n}',
     defines: [
     ],
   },
   {
     name: 'sprite',
-    vert: '\n \nuniform mat4 viewProj;\n#ifdef use2DPos\nattribute vec2 a_position;\n#else\nattribute vec3 a_position;\n#endif\nattribute lowp vec4 a_color;\n#ifdef useModel\n  uniform mat4 model;\n#endif\n#ifdef useTexture\n  attribute mediump vec2 a_uv0;\n  varying mediump vec2 uv0;\n#endif\n#ifndef useColor\nvarying lowp vec4 v_fragmentColor;\n#endif\nvoid main () {\n  mat4 mvp;\n  #ifdef useModel\n    mvp = viewProj * model;\n  #else\n    mvp = viewProj;\n  #endif\n  #ifdef use2DPos\n  vec4 pos = mvp * vec4(a_position, 0, 1);\n  #else\n  vec4 pos = mvp * vec4(a_position, 1);\n  #endif\n  #ifndef useColor\n  v_fragmentColor = a_color;\n  #endif\n  #ifdef useTexture\n    uv0 = a_uv0;\n  #endif\n  gl_Position = pos;\n}',
-    frag: '\n \n#ifdef useTexture\n  uniform sampler2D texture;\n  varying mediump vec2 uv0;\n#endif\n#ifdef alphaTest\n  uniform lowp float alphaThreshold;\n#endif\n#ifdef useColor\n  uniform lowp vec4 color;\n#else\n  varying lowp vec4 v_fragmentColor;\n#endif\nvoid main () {\n  #ifdef useColor\n    vec4 o = color;\n  #else\n    vec4 o = v_fragmentColor;\n  #endif\n  #ifdef useTexture\n    o *= texture2D(texture, uv0);\n  #endif\n  #ifdef alphaTest\n    if (o.a <= alphaThreshold)\n      discard;\n  #endif\n  gl_FragColor = o;\n}',
+    vert: '\n \nuniform mat4 viewProj;\n#ifdef use2DPos\nattribute vec2 a_position;\n#else\nattribute vec3 a_position;\n#endif\nattribute vec4 a_color;\n#ifdef useModel\n  uniform mat4 model;\n#endif\n#ifdef useTexture\n  attribute vec2 a_uv0;\n  varying vec2 uv0;\n#endif\n#ifndef useColor\nvarying lowp vec4 v_fragmentColor;\n#endif\nvoid main () {\n  mat4 mvp;\n  #ifdef useModel\n    mvp = viewProj * model;\n  #else\n    mvp = viewProj;\n  #endif\n  #ifdef use2DPos\n  vec4 pos = mvp * vec4(a_position, 0, 1);\n  #else\n  vec4 pos = mvp * vec4(a_position, 1);\n  #endif\n  #ifndef useColor\n  v_fragmentColor = a_color;\n  #endif\n  #ifdef useTexture\n    uv0 = a_uv0;\n  #endif\n  gl_Position = pos;\n}',
+    frag: '\n \n#ifdef useTexture\n  uniform sampler2D texture;\n  varying vec2 uv0;\n#endif\n#ifdef alphaTest\n  uniform float alphaThreshold;\n#endif\n#ifdef useColor\n  uniform vec4 color;\n#else\n  varying vec4 v_fragmentColor;\n#endif\nvoid main () {\n  #ifdef useColor\n    vec4 o = color;\n  #else\n    vec4 o = v_fragmentColor;\n  #endif\n  #ifdef useTexture\n    o *= texture2D(texture, uv0);\n  #endif\n  #ifdef alphaTest\n    if (o.a <= alphaThreshold)\n      discard;\n  #endif\n  gl_FragColor = o;\n}',
     defines: [
       { name: 'useTexture', },
       { name: 'useModel', },
@@ -13778,7 +13792,7 @@ var RenderData = (function (BaseRenderData$$1) {
 
   RenderData.free = function free (data) {
     if (data instanceof RenderData) {
-      for (var i = data.length-1; i > 0; i--) {
+      for (var i = data._data.length-1; i >= 0; i--) {
         _dataPool.free(data._data[i]);
       }
       data._data.length = 0;
@@ -14335,7 +14349,7 @@ var StencilMaterial = (function (Material$$1) {
   StencilMaterial.prototype = Object.create( Material$$1 && Material$$1.prototype );
   StencilMaterial.prototype.constructor = StencilMaterial;
 
-  var prototypeAccessors = { effect: { configurable: true },useTexture: { configurable: true },useModel: { configurable: true },useColor: { configurable: true },texture: { configurable: true },alphaThreshold: { configurable: true } };
+  var prototypeAccessors = { effect: { configurable: true },useTexture: { configurable: true },useColor: { configurable: true },texture: { configurable: true },alphaThreshold: { configurable: true } };
 
   prototypeAccessors.effect.get = function () {
     return this._effect;
@@ -14347,14 +14361,6 @@ var StencilMaterial = (function (Material$$1) {
 
   prototypeAccessors.useTexture.set = function (val) {
     this._effect.define('useTexture', val);
-  };
-
-  prototypeAccessors.useModel.get = function () {
-    this._effect.getDefine('useModel');
-  };
-
-  prototypeAccessors.useModel.set = function (val) {
-    this._effect.define('useModel', val);
   };
 
   prototypeAccessors.useColor.get = function () {
@@ -14388,7 +14394,6 @@ var StencilMaterial = (function (Material$$1) {
   StencilMaterial.prototype.clone = function clone () {
     var copy = new StencilMaterial();
     copy.useTexture = this.useTexture;
-    copy.useModel = this.useModel;
     copy.useColor = this.useColor;
     copy.texture = this.texture;
     copy.alphaThreshold = this.alphaThreshold;

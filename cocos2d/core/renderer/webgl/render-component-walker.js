@@ -27,7 +27,7 @@ const macro = require('../../platform/CCMacro');
 const renderEngine = require('../render-engine');
 const defaultVertexFormat = require('./vertex-format').vfmtPosUv;
 const StencilManager = require('./stencil-manager');
-const dynamicAtlasManager = require('../utils/dynamic-atlas/manager');
+const atlasManager = require('../utils/dynamic-atlas/manager');
 const RenderFlow = require('../render-flow');
 const QuadBuffer = require('./quad-buffer');
 const MeshBuffer = require('./mesh-buffer');
@@ -123,6 +123,11 @@ RenderComponentWalker.prototype = {
         this._stencilMgr.reset();
     },
 
+    clearPools () {
+        this._iaPool.resetToInit();
+        this._modelPool.resetToInit();
+    },
+
     _flush () {
         let material = this.material,
             buffer = this._buffer,
@@ -158,7 +163,6 @@ RenderComponentWalker.prototype = {
            
         buffer.byteStart = buffer.byteOffset;
         buffer.indiceStart = buffer.indiceOffset;
-        buffer.vertexStart = buffer.vertexOffset;
     },
 
     _flushIA (iaRenderData) {
@@ -186,8 +190,10 @@ RenderComponentWalker.prototype = {
     },
 
     _commitComp (comp, assembler, cullingMask) {
-        if (this.material._hash != comp._material._hash || 
-            this.cullingMask !== cullingMask) {
+        if (this.material === null 
+            || this.material === undefined
+            || (comp._material && this.material._hash != comp._material._hash) 
+            || this.cullingMask !== cullingMask) {
             this._flush();
     
             this.node = assembler.useModel ? comp.node : this._dummyNode;
@@ -213,10 +219,7 @@ RenderComponentWalker.prototype = {
 
         RenderFlow.render(scene);
         
-        if (dynamicAtlasManager) {
-            dynamicAtlasManager.update();
-        }
-        
+        atlasManager.update();
         this._flush();
 
         for (let key in _buffers) {

@@ -539,11 +539,7 @@ var Node = cc.Class({
         _quat: cc.Quat,
         _skewX: 0.0,
         _skewY: 0.0,
-        _localZOrder: {
-            default: 0,
-            serializable: false
-        },
-        _zIndex: 0,
+        _localZOrder: 0,
 
         // internal properties
 
@@ -1070,7 +1066,8 @@ var Node = cc.Class({
          */
         zIndex: {
             get () {
-                return this._zIndex;
+                // high bits for zIndex, lower bits for arrival order
+                return (this._localZOrder & 0xffff0000) >> 16;
             },
             set (value) {
                 if (value > macro.MAX_ZINDEX) {
@@ -1082,8 +1079,8 @@ var Node = cc.Class({
                     value = macro.MIN_ZINDEX;
                 }
 
-                if (this._zIndex !== value) {
-                    this._zIndex = value;
+                var zIndex = (this._localZOrder & 0xffff0000) >> 16;
+                if (zIndex !== value) {
                     this._localZOrder = (this._localZOrder & 0x0000ffff) | (value << 16);
 
                     if (this._parent) {
@@ -1249,11 +1246,6 @@ var Node = cc.Class({
             this._scale.y = this._scaleY;
             this._scaleY = undefined;
         }
-
-        if (this._localZOrder !== 0) {
-            this._zIndex = (this._localZOrder & 0xffff0000) >> 16;
-        }
-
         // TODO: remove _rotationX & _rotationY in future version, 3.0 ?
         // Update quaternion from rotation, when upgrade from 1.x to 2.0
         // If rotation x & y is 0 in old version, then update rotation from default quaternion is ok too
@@ -2638,7 +2630,7 @@ var Node = cc.Class({
      * !#zh 返回这个将节点（局部）的空间坐标系转换成父节点的空间坐标系的矩阵。这个矩阵以像素为单位。
      * @method getNodeToParentTransform
      * @deprecated since v2.0
-     * @param {AffineTransform} [out] The affine transform object to be filled with data
+     * @param {AffineTransform} out The affine transform object to be filled with data
      * @return {AffineTransform} Same as the out affine transform object
      * @example
      * let affineTransform = cc.AffineTransform.create();
@@ -2670,7 +2662,7 @@ var Node = cc.Class({
      * 该方法基于节点坐标。
      * @method getNodeToParentTransformAR
      * @deprecated since v2.0
-     * @param {AffineTransform} [out] The affine transform object to be filled with data
+     * @param {AffineTransform} out The affine transform object to be filled with data
      * @return {AffineTransform} Same as the out affine transform object
      * @example
      * let affineTransform = cc.AffineTransform.create();
@@ -2689,7 +2681,7 @@ var Node = cc.Class({
      * !#zh 返回节点到世界坐标系的仿射变换矩阵。矩阵单位是像素。
      * @method getNodeToWorldTransform
      * @deprecated since v2.0
-     * @param {AffineTransform} [out] The affine transform object to be filled with data
+     * @param {AffineTransform} out The affine transform object to be filled with data
      * @return {AffineTransform} Same as the out affine transform object
      * @example
      * let affineTransform = cc.AffineTransform.create();
@@ -2720,7 +2712,7 @@ var Node = cc.Class({
      * 该方法基于节点坐标。
      * @method getNodeToWorldTransformAR
      * @deprecated since v2.0
-     * @param {AffineTransform} [out] The affine transform object to be filled with data
+     * @param {AffineTransform} out The affine transform object to be filled with data
      * @return {AffineTransform} Same as the out affine transform object
      * @example
      * let affineTransform = cc.AffineTransform.create();
@@ -2743,7 +2735,7 @@ var Node = cc.Class({
      * 该矩阵以像素为单位。返回的矩阵是只读的，不能更改。
      * @method getParentToNodeTransform
      * @deprecated since v2.0
-     * @param {AffineTransform} [out] The affine transform object to be filled with data
+     * @param {AffineTransform} out The affine transform object to be filled with data
      * @return {AffineTransform} Same as the out affine transform object
      * @example
      * let affineTransform = cc.AffineTransform.create();
@@ -2763,7 +2755,7 @@ var Node = cc.Class({
      * !#en 返回世界坐标系到节点坐标系的逆矩阵。
      * @method getWorldToNodeTransform
      * @deprecated since v2.0
-     * @param {AffineTransform} [out] The affine transform object to be filled with data
+     * @param {AffineTransform} out The affine transform object to be filled with data
      * @return {AffineTransform} Same as the out affine transform object
      * @example
      * let affineTransform = cc.AffineTransform.create();

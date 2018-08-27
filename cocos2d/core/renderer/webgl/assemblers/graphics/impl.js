@@ -1,12 +1,6 @@
 
 const Helper = require('../../../../graphics/helper');
 const PointFlags = require('../../../../graphics/types').PointFlags;
-const MeshBuffer = require('../../mesh-buffer');
-const vfmtPosColor = require('../../vertex-format').vfmtPosColor;
-const renderer = require('../../../index');
-const renderEngine = renderer.renderEngine;
-const IARenderData = renderEngine.IARenderData;
-const InputAssembler = renderEngine.InputAssembler;
 
 let Point = cc.Class({
     name: 'cc.GraphicsPoint',
@@ -45,7 +39,7 @@ cc.js.mixin(Path.prototype, {
     }
 });
 
-function Impl (graphics) {
+function Impl () {
     // inner properties
     this._tessTol = 0.25;
     this._distTol = 0.01;
@@ -154,18 +148,15 @@ cc.js.mixin(Impl.prototype, {
             this._points.length = 0;
             // manually destroy render datas
             for (let i = 0, l = datas.length; i < l; i++) {
-                let data = datas[i];
-                data.meshbuffer.destroy();
-                data.meshbuffer = null;
+                comp.destroyRenderData(datas[i]);
             }
             datas.length = 0;
         }
         else {
             for (let i = 0, l = datas.length; i < l; i++) {
                 let data = datas[i];
-
-                let meshbuffer = data.meshbuffer;
-                meshbuffer.reset();
+                data.indiceCount = data._indices.length = 0;
+                data.vertexCount = 0;
             }
         }
     },
@@ -213,29 +204,6 @@ cc.js.mixin(Impl.prototype, {
     
         pt.flags = flags;
         pathPoints.push(pt);
-    },
-
-    requestRenderData () {
-        let renderData = new IARenderData();
-        let meshbuffer = new MeshBuffer(renderer._walker, vfmtPosColor);
-        renderData.meshbuffer = meshbuffer;
-        this._renderDatas.push(renderData);
-
-        let ia = new InputAssembler();
-        ia._vertexBuffer = meshbuffer._vb;
-        ia._indexBuffer = meshbuffer._ib;
-        ia._start = 0;
-        renderData.ia = ia;
-
-        return renderData;
-    },
-
-    getRenderDatas () {
-        if (this._renderDatas.length === 0) {
-            this.requestRenderData();
-        }
-
-        return this._renderDatas;
     }
 });
 

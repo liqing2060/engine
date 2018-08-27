@@ -79,9 +79,7 @@ let EditBox = cc.Class({
                 }
 
                 this._string = value;
-                if (this._impl) {
-                    this._updateString(value);
-                }
+                this._updateString(value);
             }
         },
 
@@ -115,9 +113,7 @@ let EditBox = cc.Class({
             displayName: 'KeyboardReturnType',
             type: KeyboardReturnType,
             notify () {
-                if (this._impl) {
-                    this._impl.returnType = this.returnType;
-                }
+                this._impl.returnType = this.returnType;
             }
         },
 
@@ -132,10 +128,7 @@ let EditBox = cc.Class({
             default: InputFlag.DEFAULT,
             type: InputFlag,
             notify () {
-                if (this._impl) {
-                    this._impl.setInputFlag(this.inputFlag);
-                    this._updateString(this._string);
-                }
+                this._impl.inputFlag = this.inputFlag;
             }
         },
         /**
@@ -152,9 +145,7 @@ let EditBox = cc.Class({
             default: InputMode.ANY,
             type: InputMode,
             notify () {
-                if (this._impl) {
-                    this._impl.setInputMode(this.inputMode);
-                }
+                this._impl.setInputMode(this.inputMode);
             }
         },
 
@@ -169,9 +160,6 @@ let EditBox = cc.Class({
             notify () {
                 if (this._textLabel) {
                     this._textLabel.fontSize = this.fontSize;
-                }
-                if (this._impl) {
-                    this._impl.setFontSize(this.fontSize);
                 }
             }
         },
@@ -201,11 +189,7 @@ let EditBox = cc.Class({
             default: cc.Color.WHITE,
             notify () {
                 if (this._textLabel) {
-                    this._textLabel.node.opacity = this.fontColor.a;
                     this._textLabel.node.color = this.fontColor;
-                }
-                if (this._impl) {
-                    this._impl.setFontColor(this.fontColor);
                 }
             }
         },
@@ -222,9 +206,7 @@ let EditBox = cc.Class({
                 if (this._placeholderLabel) {
                     this._placeholderLabel.string = this.placeholder;
                 }
-                if (this._impl) {
-                    this._impl.setPlaceholderText(this.placeholder);
-                }
+                this._impl.setPlaceholderText(this.placeholder);
             }
         },
 
@@ -254,7 +236,6 @@ let EditBox = cc.Class({
             notify () {
                 if (this._placeholderLabel) {
                     this._placeholderLabel.node.color = this.placeholderFontColor;
-                    this._placeholderLabel.node.opacity = this.placeholderFontColor.a;
                 }
             }
         },
@@ -272,9 +253,7 @@ let EditBox = cc.Class({
             tooltip: CC_DEV && 'i18n:COMPONENT.editbox.max_length',
             default: 20,
             notify () {
-                if (this._impl) {
-                    this._impl.setMaxLength(this.maxLength);
-                }
+                this._impl.setMaxLength(this.maxLength);
             }
         },
 
@@ -288,9 +267,7 @@ let EditBox = cc.Class({
             tooltip: CC_DEV && 'i18n:COMPONENT.editbox.stay_on_top',
             default: false,
             notify () {
-                if (this._impl) {
-                    this._updateStayOnTop();
-                }
+                this._updateStayOnTop();
             }
         },
 
@@ -308,9 +285,7 @@ let EditBox = cc.Class({
             },
             set (value) {
                 this._tabIndex = value;
-                if (this._impl) {
-                    this._impl.setTabIndex(value);
-                }
+                this._impl.setTabIndex(value);
             }
         },
 
@@ -575,14 +550,6 @@ let EditBox = cc.Class({
 
     onDestroy () {
         this._impl.clear();
-    },
-
-    onEnable () {
-        this._impl && this._impl.onEnable();
-    },
-
-    onDisable () {
-        this._impl && this._impl.onDisable();
     },
 
     __preload () {

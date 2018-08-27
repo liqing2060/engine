@@ -23,6 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+const js = require('../../cocos2d/core/platform/js');
 const Skeleton = require('./Skeleton');
 const spine = require('./lib/spine');
 const renderer = require('../../cocos2d/core/renderer');
@@ -101,6 +102,7 @@ var spineAssembler = {
         // get the vertex data
         let vertices = attachment.updateWorldVertices(slot, premultipliedAlpha);
         let vertexCount = vertices.length / 8;
+        let graphics = comp._debugRenderer;
         // augment render data size to ensure capacity
         renderData.dataLength += vertexCount;
         let data = renderData._data;
@@ -125,8 +127,6 @@ var spineAssembler = {
         }
 
         if (comp.debugSlots && vertexCount === 4) {
-            let graphics = comp._debugRenderer;
-            
             // Debug Slot
             let VERTEX = spine.RegionAttachment;
             graphics.strokeColor = _slotColor;
@@ -216,6 +216,8 @@ var spineAssembler = {
                 data = datas[dataId];
                 if (!data) {
                     data = datas[dataId] = comp.requestRenderData();
+                } else {
+                    data = datas[dataId];
                 }
                 data.dataLength = vertexCount;
                 data.material = currMaterial;
@@ -276,6 +278,14 @@ var spineAssembler = {
                 if (i === 0) {
                     graphics.fillColor = _originColor;
                 }
+            }
+        }
+
+        if (comp.debugBones || comp.debugSlots) {
+            let renderDatas = graphics._impl._renderDatas;
+            for (let i = 0; i < renderDatas.length; i++) {
+                renderDatas[i].material = _debugMaterial;
+                datas.push(renderDatas[i]);
             }
         }
     },

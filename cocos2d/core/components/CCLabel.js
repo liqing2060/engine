@@ -457,14 +457,9 @@ let Label = cc.Class({
         if (!this.font && !this._isSystemFontUsed) {
             this.useSystemFont = true;
         }
-        // Reapply default font family if necessary
-        if (this.useSystemFont && !this.fontFamily) {
-            this.fontFamily = 'Arial';
-        }
 
         // Keep track of Node size
         this.node.on(cc.Node.EventType.SIZE_CHANGED, this._updateRenderData, this);
-        this.node.on(cc.Node.EventType.ANCHOR_CHANGED, this._updateRenderData, this);
 
         this._checkStringEmpty();
         this._updateAssembler();
@@ -474,7 +469,6 @@ let Label = cc.Class({
     onDisable () {
         this._super();
         this.node.off(cc.Node.EventType.SIZE_CHANGED, this._updateRenderData, this);
-        this.node.off(cc.Node.EventType.ANCHOR_CHANGED, this._updateRenderData, this);
     },
 
     onDestroy () {
@@ -543,10 +537,7 @@ let Label = cc.Class({
         else {
             if (!this._ttfTexture) {
                 this._ttfTexture = new cc.Texture2D();
-                // TTF texture in web will blend with canvas or body background color
-                if (!CC_JSB) {
-                    this._ttfTexture.setPremultiplyAlpha(true);
-                }
+                this._ttfTexture.setPremultiplyAlpha(true);
                 this._assemblerData = this._assembler._getAssemblerData();
                 this._ttfTexture.initWithElement(this._assemblerData.canvas);
             }
@@ -564,10 +555,7 @@ let Label = cc.Class({
             }
             // Setup blend function for premultiplied ttf label texture
             if (this._texture === this._ttfTexture) {
-                this._srcBlendFactor = cc.macro.BlendFactor.ONE;
-            }
-            else {
-                this._srcBlendFactor = cc.macro.BlendFactor.SRC_ALPHA;
+                this._srcBlendFactor = cc.macro.ONE;
             }
             material.texture = this._texture;
             this._updateMaterial(material);

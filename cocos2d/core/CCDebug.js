@@ -23,6 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+const Enum = require('./platform/CCEnum');
 const debugInfos = require('../../DebugInfos') || {};
 const ERROR_MAP_URL = 'https://github.com/cocos-creator/engine/blob/master/EngineErrorMap.md';
 
@@ -93,7 +94,7 @@ let resetDebugSetting = function (mode) {
             };
         }
         if (mode === DebugMode.INFO_FOR_WEB_PAGE) {
-            cc.log = function () {
+            cc.log = cc.info = function () {
                 logToWebPage(cc.js.formatStr.apply(null, arguments));
             };
         }
@@ -177,6 +178,7 @@ let resetDebugSetting = function (mode) {
     }
     if (CC_EDITOR) {
         cc.log = Editor.log;
+        cc.info = Editor.info;
     }
     else if (mode === DebugMode.INFO) {
         /**
@@ -203,6 +205,29 @@ let resetDebugSetting = function (mode) {
         else {
             cc.log = function () {
                 return console.log.apply(console, arguments);
+            };
+        }
+        /**
+         * !#en
+         * Outputs an informational message to the Cocos Creator Console (editor) or Web Console (runtime).
+         * - In Cocos Creator, info is blue.
+         * - In Firefox and Chrome, a small "i" icon is displayed next to these items in the Web Console's log.
+         * !#zh
+         * 输出一条信息消息到 Cocos Creator 编辑器的 Console 或运行时 Web 端的 Console 中。
+         * - 在 Cocos Creator 中，Info 信息显示是蓝色的。<br/>
+         * - 在 Firefox 和  Chrome 中，Info 信息有着小 “i” 图标。
+         * @method info
+         * @param {any} msg - A JavaScript string containing zero or more substitution strings.
+         * @param {any} ...subst - JavaScript objects with which to replace substitution strings within msg. This gives you additional control over the format of the output.
+         */
+        if (CC_JSB) {
+            cc.info = (scriptEngineType === "JavaScriptCore") ? function () {
+                (console.info || console.log).apply(console, arguments);
+            } : (console.info || console.log);
+        }
+        else {
+            cc.info = function () {
+                (console.info || console.log).apply(console, arguments);
             };
         }
     }
@@ -262,12 +287,20 @@ cc.assertID = function (cond) {
 };
 
 /**
-* !#en Enum for debug modes.
-* !#zh 调试模式
-* @enum debug.DebugMode
-* @memberof cc
+ * !#en An object to boot the game.
+ * !#zh 包含游戏主体信息并负责驱动游戏的游戏对象。
+ * @class debug
+ * @main
+ * @static
  */
-var DebugMode = cc.Enum({
+
+/**
+ * !#en Enum for debug modes.
+ * !#zh 调试模式
+ * @enum DebugMode
+ * @property
+ */
+var DebugMode = Enum({
     /**
      * !#en The debug mode none.
      * !#zh 禁止模式，禁止显示任何日志信息。
@@ -325,13 +358,7 @@ var DebugMode = cc.Enum({
      */
     ERROR_FOR_WEB_PAGE: 6
 });
-/**
- * !#en An object to boot the game.
- * !#zh 包含游戏主体信息并负责驱动游戏的游戏对象。
- * @class debug
- * @main
- * @static
- */
+
 module.exports = cc.debug = {
     DebugMode: DebugMode,
 
@@ -342,7 +369,7 @@ module.exports = cc.debug = {
      * !#zh 通过 error id 和必要的参数来获取错误信息。
      * @method getError
      * @param {id} errorId
-     * @param {any} [param]
+     * @param {ANY} [param]
      * @return {String}
      */
     getError: getTypedFormatter('ERROR'),

@@ -104,7 +104,6 @@ let tmxAssembler = {
         let renderData = comp._renderData;
         let data = renderData._data;
         let color = node._color._val;
-        let opacity = node._color.a;
 
         renderData.dataLength = renderData.vertexCount = renderData.indiceCount = 0;
 
@@ -255,8 +254,7 @@ let tmxAssembler = {
 
                     // color
                     color2 = color;
-                    let newOpacity = (tiledNode.opacity * opacity) / 255;
-                    color = tiledNode.color.setA(newOpacity)._val;
+                    color = tiledNode.color._val;
 
                     // transform
                     a2 = a; b2 = b; c2 = c; d2 = d; tx2 = tx; ty2 = ty;

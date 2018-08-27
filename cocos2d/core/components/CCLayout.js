@@ -587,13 +587,13 @@ var Layout = cc.Class({
                         secondMaxHeight = childBoundingBoxHeight;
                         tempMaxHeight = 0;
                     }
-                    nextX = leftBoundaryOfLayout + sign * (paddingX + anchorX * childBoundingBoxWidth);
+                    nextX = leftBoundaryOfLayout + sign * (paddingX + anchorX * child.width);
                     row++;
                 }
             }
 
             var finalPositionY = fnPositionY(child, rowMaxHeight, row);
-            if (baseWidth >= (childBoundingBoxWidth + this.paddingLeft + this.paddingRight)) {
+            if (baseWidth >= (child.width + this.paddingLeft + this.paddingRight)) {
                 if (applyChildren) {
                     child.setPosition(cc.v2(nextX, finalPositionY));
                 }

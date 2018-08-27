@@ -263,8 +263,7 @@ var Color = (function () {
      * color.setR(255); // Color {r: 255, g: 0, b: 0, a: 255}
      */
     proto.setR = function (red) {
-        red = ~~cc.misc.clampf(red, 0, 255);
-        this._val = ((this._val & 0xffffff00) | red) >>> 0;
+        this._val = ((this._val & 0xffffff00) | ~~red) >>> 0;
         return this;
     };
     /**
@@ -287,8 +286,7 @@ var Color = (function () {
      * color.setG(255); // Color {r: 0, g: 255, b: 0, a: 255}
      */
     proto.setG = function (green) {
-        green = ~~cc.misc.clampf(green, 0, 255);
-        this._val = ((this._val & 0xffff00ff) | (green << 8)) >>> 0;
+        this._val = ((this._val & 0xffff00ff) | (~~green << 8)) >>> 0;
         return this;
     };
     /**
@@ -311,8 +309,7 @@ var Color = (function () {
      * color.setB(255); // Color {r: 0, g: 0, b: 255, a: 255}
      */
     proto.setB = function (blue) {
-        blue = ~~cc.misc.clampf(blue, 0, 255);
-        this._val = ((this._val & 0xff00ffff) | (blue << 16)) >>> 0;
+        this._val = ((this._val & 0xff00ffff) | (~~blue << 16)) >>> 0;
         return this;
     };
     /**
@@ -335,8 +332,7 @@ var Color = (function () {
      * color.setA(0); // Color {r: 0, g: 0, b: 0, a: 0}
      */
     proto.setA = function (alpha) {
-        alpha = ~~cc.misc.clampf(alpha, 0, 255);
-        this._val = ((this._val & 0x00ffffff) | ((alpha << 24) >>> 0)) >>> 0;
+        this._val = ((this._val & 0x00ffffff) | ((~~alpha << 24) >>> 0)) >>> 0;
         return this;
     };
 
@@ -526,7 +522,7 @@ var Color = (function () {
         r *= 255;
         g *= 255;
         b *= 255;
-        this._val = ((this.a<<24) >>> 0) + (b<<16) + (g<<8) + r;
+        this._val = ((r << 24) >>> 0) + (g << 16) + (b << 8) + this.a;
         return this;
     };
 

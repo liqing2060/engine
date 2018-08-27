@@ -55,7 +55,7 @@ var Direction = cc.Enum({
  */
 var Slider = cc.Class({
     name: 'cc.Slider',
-    extends: Component,
+    extends: require('./CCComponent'),
 
     editor: CC_EDITOR && {
         menu: 'i18n:MAIN_MENU.component.ui/Slider',

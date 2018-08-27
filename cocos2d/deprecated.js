@@ -26,7 +26,7 @@
 
 var js = cc.js;
 
-if (CC_DEBUG) {
+if (CC_DEV) {
 
     function deprecateEnum (obj, oldPath, newPath, hasTypePrefixBefore) {
         if (!CC_SUPPORT_JIT) {
@@ -138,16 +138,12 @@ if (CC_DEBUG) {
                     cc.warn('Sorry, %s.%s is deprecated. Please use %s instead', ownerName, propName, obj[propName]);
                     return originFunc.apply(this, arguments);
                 }
-
+                
                 ownerCtor[propName] = warn;
             })();
         }
     }
-    // remove cc.info
-    js.get(cc, 'info', function () {
-        cc.warnID(1400, 'cc.info', 'cc.log');
-        return cc.log;
-    });
+
     // cc.spriteFrameCache
     js.get(cc, "spriteFrameCache", function () {
         cc.errorID(1404);
@@ -438,7 +434,7 @@ if (CC_DEBUG) {
 
         // Vec2
         pointEqualToPoint: 'cc.Vec2 equals',
-
+        
         // Size
         sizeEqualToSize: 'cc.Size equals',
 
@@ -509,9 +505,9 @@ if (CC_DEBUG) {
         _getError: 'cc.debug.getError',
         _initDebugSetting: 'cc.debug._resetDebugSetting',
         DebugMode: 'cc.debug.DebugMode',
-        BlendFunc: 'cc.macro.BlendFactor',
     }, 'cc');
     markAsRemovedInObject(cc, [
+        'BlendFunc',
         'blendFuncDisable',
 
         'pFromSize',
@@ -580,7 +576,7 @@ if (CC_DEBUG) {
         cc.errorID(1407);
         return js.Pool;
     });
-
+    
     // cc.isChildClassOf
     js.get(cc, 'isChildClassOf', function () {
         cc.errorID(1400, 'cc.isChildClassOf', 'cc.js.isChildClassOf');

@@ -93,25 +93,6 @@ let EditBoxImpl = cc.Class({
         this.__orientationChanged = null;
     },
 
-    onEnable () {
-        if (!this._edTxt) {
-            return;
-        }
-        if (this._alwaysOnTop) {
-            this._edTxt.style.display = '';
-        } 
-        else {
-            this._edTxt.style.display = 'none';
-        }
-    },
-
-    onDisable () {
-        if (!this._edTxt) {
-            return;
-        }
-        this._edTxt.style.display = 'none';
-    },
-
     setTabIndex (index) {
         if (this._edTxt) {
             this._edTxt.tabIndex = index;
@@ -220,7 +201,7 @@ let EditBoxImpl = cc.Class({
     
     setFontColor (color) {
         this._textColor = color;
-        this._edTxt.style.color = color.toCSS('rgba');
+        this._edTxt.style.color = color.toHEX();
     },
     
     setSize (width, height) {
@@ -498,11 +479,7 @@ function registerInputEventListener (tmpEdTxt, editBoxImpl, isTextarea) {
 
     cbs.focus = function () {
         this.style.fontSize = editBoxImpl._edFontSize + 'px';
-        this.style.color = editBoxImpl._textColor.toCSS('rgba');
-        // When stayOnTop, input will swallow touch event
-        if (editBoxImpl._alwaysOnTop) {
-            editBoxImpl._editing = true;
-        }
+        this.style.color = editBoxImpl._textColor.toHEX();
 
         if (cc.sys.isMobile) {
             editBoxImpl._onFocusOnMobile();

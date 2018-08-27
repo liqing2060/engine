@@ -25,6 +25,7 @@
  ****************************************************************************/
 
 var js = require('../platform/js');
+var sys = require('../platform/CCSys');
 
 /**
  * misc utilities

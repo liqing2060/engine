@@ -29,8 +29,8 @@ const js = require('./js');
 
 /**
  * Predefined constants
- * @class macro
- * @static
+ * @enum macro
+ * @type {Object}
  */
 cc.macro = {
     /**
@@ -359,7 +359,7 @@ js.getset(cc.macro, 'ENABLE_3D', function () {
 /**
  * !#en Key map for keyboard event
  * !#zh 键盘事件的按键值
- * @enum macro.KEY
+ * @enum KEY
  * @example {@link cocos2d/core/platform/CCCommon/KEY.js}
  */
 cc.macro.KEY = {
@@ -1367,7 +1367,7 @@ cc.macro.KEY = {
 
 /**
  * Image formats
- * @enum macro.ImageFormat
+ * @enum ImageFormat
  */
 cc.macro.ImageFormat = cc.Enum({
     /**
@@ -1445,7 +1445,7 @@ cc.macro.ImageFormat = cc.Enum({
  * !#zh
  * 混合因子
  * 可参考: http://www.andersriggelsen.dk/glblendfunc.php
- * @enum macro.BlendFactor
+ * @enum BlendFactor
  */
 cc.macro.BlendFactor = cc.Enum({
     /**
@@ -1511,7 +1511,7 @@ cc.macro.BlendFactor = cc.Enum({
 });
 
 /**
- * @enum macro.TextAlignment
+ * @enum TextAlignment
  */
 cc.macro.TextAlignment = cc.Enum({
     /**

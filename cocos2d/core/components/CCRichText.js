@@ -391,9 +391,8 @@ let RichText = cc.Class({
     },
 
     _resetState () {
-        let children = this.node.children;
-        for (let i = children.length - 1; i >= 0; i--) {
-            let child = children[i];
+        for (let i = this.node.children.length - 1; i >= 0; i--) {
+            let child = this.node.children[i];
             if (child.name === RichTextChildName) {
                 child.parent = null;
                 pool.put(child);
@@ -402,8 +401,6 @@ let RichText = cc.Class({
                 child.parent = null;
             }
         }
-        // HACK: Tolerate null parent child (upgrade issue may cause this special case)
-        children.length = 0;
 
         this._labelSegments.length = 0;
         this._labelSegmentsCache.length = 0;
@@ -803,8 +800,8 @@ let RichText = cc.Class({
 
         if (textStyle && textStyle.color) {
             labelNode.color = this._convertLiteralColorValue(textStyle.color);
-        }else {
-            labelNode.color = this._convertLiteralColorValue("white");
+        } else {
+            labelNode.color = this.node.color;
         }
 
         labelComponent._enableBold(textStyle && textStyle.bold);

@@ -50,12 +50,8 @@ function addRenderer (Component, handler, postHandler) {
 
 addRenderer(Sprite, spriteRenderer);
 addRenderer(Label, labelRenderer);
-if (Mask) {
-    addRenderer(Mask, maskRenderer.beforeHandler, maskRenderer.afterHandler);
-}
-if (Graphics) {
-    addRenderer(Graphics, graphicsRenderer);
-}
+addRenderer(Mask, maskRenderer.beforeHandler, maskRenderer.afterHandler);
+addRenderer(Graphics, graphicsRenderer);
 
 module.exports = {
     map,

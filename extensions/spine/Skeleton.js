@@ -28,6 +28,7 @@ const TrackEntryListeners = require('./track-entry-listeners');
 const RenderComponent = require('../../cocos2d/core/components/CCRenderComponent');
 const spine = require('./lib/spine');
 const SpriteMaterial = require('../../cocos2d/core/renderer/render-engine').SpriteMaterial;
+const Node = require('../../cocos2d/core/CCNode');
 const Graphics = require('../../cocos2d/core/graphics/graphics');
 
 /**
@@ -295,10 +296,7 @@ sp.Skeleton = cc.Class({
         debugSlots: {
             default: false,
             editorOnly: true,
-            tooltip: CC_DEV && 'i18n:COMPONENT.skeleton.debug_slots',
-            notify () {
-                this._initDebugDraw();
-            }
+            tooltip: CC_DEV && 'i18n:COMPONENT.skeleton.debug_slots'
         },
 
         /**
@@ -310,10 +308,7 @@ sp.Skeleton = cc.Class({
         debugBones: {
             default: false,
             editorOnly: true,
-            tooltip: CC_DEV && 'i18n:COMPONENT.skeleton.debug_bones',
-            notify () {
-                this._initDebugDraw();
-            }
+            tooltip: CC_DEV && 'i18n:COMPONENT.skeleton.debug_bones'
         }
     },
 
@@ -325,8 +320,8 @@ sp.Skeleton = cc.Class({
         this._boundingBox = cc.rect();
         this._material = new SpriteMaterial();
         this._renderDatas = [];
-
-        this._debugRenderer = null;
+        this._debugNode = new Node();
+        this._debugRenderer = this._debugNode.addComponent(Graphics);
     },
 
     /**
@@ -381,7 +376,6 @@ sp.Skeleton = cc.Class({
     },
 
     update (dt) {
-        if (CC_EDITOR) return;
         let skeleton = this._skeleton;
         let state = this._state;
         if (skeleton) {
@@ -400,11 +394,15 @@ sp.Skeleton = cc.Class({
             this._boundingBox = cc.rect();
             this._material = new SpriteMaterial();
             this._renderDatas = [];
+            this._debugNode = new Node();
+            this._debugRenderer = this._debugNode.addComponent(Graphics);
         }
     },
 
     onDestroy () {
         this._super();
+        this._debugNode.destroy();
+        this._debugRenderer.clear();
         // Render datas will be destroyed automatically by RenderComponent.onDestroy
         this._renderDatas.length = 0;
     },
@@ -626,7 +624,7 @@ sp.Skeleton = cc.Class({
             var res = this._state.setAnimationWith(trackIndex, animation, loop);
             if (CC_EDITOR && !cc.engine.isPlaying) {
                 this._state.update(0);
-                this._state.apply(this._skeleton);
+                this._state.clearTracks();
             }
             return res;
         }
@@ -913,26 +911,7 @@ sp.Skeleton = cc.Class({
         this._updateAnimEnum();
         this._updateSkinEnum();
         Editor.Utils.refreshSelectedInspector('node', this.node.uuid);
-    },
-
-    _initDebugDraw: function () {
-        if (this.debugBones || this.debugSlots) {
-            if (!this._debugRenderer) {
-                let debugDrawNode = new cc.PrivateNode();
-                debugDrawNode.name = 'DEBUG_DRAW_NODE';
-                let debugDraw = debugDrawNode.addComponent(Graphics);
-                debugDraw.lineWidth = 1;
-                debugDraw.strokeColor = cc.color(255, 0, 0, 255);
-                
-                this._debugRenderer = debugDraw;
-            }
-
-            this._debugRenderer.node.parent = this.node;
-        }
-        else if (this._debugRenderer) {
-            this._debugRenderer.node.parent = null;
-        }
-    },
+    }
 });
 
 module.exports = sp.Skeleton;

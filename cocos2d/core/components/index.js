@@ -51,8 +51,7 @@ var components = [
     require('./CCToggleGroup'),
     require('./CCToggle'),
     require('./CCBlockInputEvents'),
-    require('./CCMotionStreak'),
-    require('./WXSubContextView')
+    require('./CCMotionStreak')
 ];
 
 module.exports = components;

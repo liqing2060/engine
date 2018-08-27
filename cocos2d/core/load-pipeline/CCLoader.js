@@ -230,12 +230,8 @@ proto.load = function(resources, progressCallback, completeCallback) {
     var singleRes = false;
     var res;
     if (!(resources instanceof Array)) {
-        if (resources) {
-            singleRes = true;
-            resources = [resources];
-        } else { 
-            resources = [];
-        }
+        singleRes = true;
+        resources = resources ? [resources] : [];
     }
 
     _sharedResources.length = 0;

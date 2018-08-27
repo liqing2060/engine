@@ -23,34 +23,49 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var urlAppendTimestamp = require('./utils').urlAppendTimestamp;
+if (CC_JSB) {
+    module.exports = function (item) {
+        var url = item.url;
 
-module.exports = function (item, callback) {
-    var url = item.url;
-    url = urlAppendTimestamp(url);
-
-    var xhr = cc.loader.getXMLHttpRequest(),
-        errInfo = 'Load text file failed: ' + url;
-    xhr.open('GET', url, true);
-    if (xhr.overrideMimeType) xhr.overrideMimeType('text\/plain; charset=utf-8');
-    xhr.onload = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200 || xhr.status === 0) {
-                callback(null, xhr.responseText);
-            }
-            else {
-                callback({status:xhr.status, errorMessage:errInfo + '(wrong status)'});
-            }
+        var result = jsb.fileUtils.getStringFromFile(url);
+        if (typeof result === 'string' && result) {
+            return result;
         }
         else {
-            callback({status:xhr.status, errorMessage:errInfo + '(wrong readyState)'});
+            return new Error('Download text failed: ' + url);
         }
     };
-    xhr.onerror = function(){
-        callback({status:xhr.status, errorMessage:errInfo + '(error)'});
+}
+else {
+    var urlAppendTimestamp = require('./utils').urlAppendTimestamp;
+
+    module.exports = function (item, callback) {
+        var url = item.url;
+        url = urlAppendTimestamp(url);
+
+        var xhr = cc.loader.getXMLHttpRequest(),
+            errInfo = 'Load text file failed: ' + url;
+        xhr.open('GET', url, true);
+        if (xhr.overrideMimeType) xhr.overrideMimeType('text\/plain; charset=utf-8');
+        xhr.onload = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200 || xhr.status === 0) {
+                    callback(null, xhr.responseText);
+                }
+                else {
+                    callback({status:xhr.status, errorMessage:errInfo + '(wrong status)'});
+                }
+            }
+            else {
+                callback({status:xhr.status, errorMessage:errInfo + '(wrong readyState)'});
+            }
+        };
+        xhr.onerror = function(){
+            callback({status:xhr.status, errorMessage:errInfo + '(error)'});
+        };
+        xhr.ontimeout = function(){
+            callback({status:xhr.status, errorMessage:errInfo + '(time out)'});
+        };
+        xhr.send(null);
     };
-    xhr.ontimeout = function(){
-        callback({status:xhr.status, errorMessage:errInfo + '(time out)'});
-    };
-    xhr.send(null);
-};
+}

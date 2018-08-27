@@ -347,22 +347,10 @@ let VideoPlayerImpl = cc.Class({
         let video = this._video;
         if (!video) return;
 
-        if (sys.os === sys.OS_IOS && sys.isBrowser) {
-            if (enable) {
-                video.webkitEnterFullscreen && video.webkitEnterFullscreen();
-            }
-            else {
-                video.webkitExitFullscreen && video.webkitExitFullscreen();
-            }
-        }
-        else {
-            if (enable) {
-                cc.screen.requestFullScreen(video);
-            }
-            else {
-                cc.screen.exitFullScreen(video);
-            }
-        }
+        if (enable)
+            cc.screen.requestFullScreen(video);
+        else
+            cc.screen.exitFullScreen(video);
 
     },
 

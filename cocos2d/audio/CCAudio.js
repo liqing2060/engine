@@ -77,11 +77,7 @@ Audio.State = {
     /**
      * @property {Number} PAUSED
      */
-    PAUSED: 2,
-    /**
-     * @property {Number} STOPPED
-     */
-    STOPPED: 3,
+    PAUSED: 2
 };
 
 (function (proto) {
@@ -175,14 +171,14 @@ Audio.State = {
     };
 
     proto.pause = function () {
-        if (!this._element || this._state !== Audio.State.PLAYING) return;
+        if (!this._element) return;
         this._unbindEnded();
         this._element.pause();
         this._state = Audio.State.PAUSED;
     };
 
     proto.resume = function () {
-        if (!this._element || this._state !== Audio.State.PAUSED) return;
+        if (!this._element || this._state === Audio.State.PLAYING) return;
         this._bindEnded();
         this._element.play();
         this._state = Audio.State.PLAYING;
@@ -190,10 +186,10 @@ Audio.State = {
 
     proto.stop = function () {
         if (!this._element) return;
-        this._element.pause();
         try {
             this._element.currentTime = 0;
         } catch (error) {}
+        this._element.pause();
         // remove touchPlayList
         for (let i = 0; i < touchPlayList.length; i++) {
             if (touchPlayList[i].instance === this) {
@@ -203,7 +199,7 @@ Audio.State = {
         }
         this._unbindEnded();
         this.emit('stop');
-        this._state = Audio.State.STOPPED;
+        this._state = Audio.State.PAUSED;
     };
 
     proto.setLoop = function (loop) {
@@ -288,20 +284,6 @@ Audio.State = {
                 clip.once('load', function () {
                     if (clip === self._src) {
                         self._onLoaded();
-                    }
-                });
-                cc.loader.load({
-                    url: clip.nativeUrl,
-                    // For audio, we should skip loader otherwise it will load a new audioClip.
-                    skips: ['Loader'],
-                },
-                function (err, audioNativeAsset) {
-                    if (err) {
-                        cc.error(err);
-                        return;
-                    }
-                    if (!clip.loaded) {
-                        clip._nativeAsset = audioNativeAsset;
                     }
                 });
             }

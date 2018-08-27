@@ -661,7 +661,6 @@ function initSys () {
         sys.isMobile = true;
         sys.platform = sys.QQ_PLAY;
         sys.language = sys.LANGUAGE_UNKNOWN;
-        var system = env.system.toLowerCase();
         if (env.platform === "android") {
             sys.os = sys.OS_ANDROID;
         }
@@ -672,13 +671,8 @@ function initSys () {
             sys.os = sys.OS_UNKNOWN;
         }
 
-        // Adaptation to Android P
-        if (system === 'android p') {
-            system = 'android p 9.0';
-        }
-
-        var version = /[\d\.]+/.exec(system);
-        sys.osVersion = version ? version[0] : system;
+        var version = /[\d\.]+/.exec(env.version);
+        sys.osVersion = version[0];
         sys.osMainVersion = parseInt(sys.osVersion.split('.')[0]);
         sys.browserType = sys.BROWSER_TYPE_QQ_PLAY;
         sys.browserVersion = 0;
@@ -1130,7 +1124,7 @@ function initSys () {
     sys.garbageCollect = function () {
         // N/A in web
         if (CC_JSB) {
-            jsb.garbageCollect();
+            __jsc__.garbageCollect();
         }
     };
 
@@ -1141,7 +1135,7 @@ function initSys () {
     sys.dumpRoot = function () {
         // N/A in web
         if (CC_JSB) {
-            jsb.dumpRoot();
+            __jsc__.dumpRoot();
         }
     };
 
