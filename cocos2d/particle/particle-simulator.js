@@ -197,20 +197,21 @@ Simulator.prototype.updateUVs = function (force) {
         const FLOAT_PER_PARTICLE = 4 * this.sys._vertexFormat._bytes / 4;
         let vbuf = this.sys._buffer._vData;
         let uv = this.sys._spriteFrame.uv;
-
-        let start = force ? 0 : this._uvFilled;
-        for (let i = start; i < particleCount; i++) {
-            let offset = i * FLOAT_PER_PARTICLE;
-            vbuf[offset+2] = uv[0];
-            vbuf[offset+3] = uv[1];
-            vbuf[offset+7] = uv[2];
-            vbuf[offset+8] = uv[3];
-            vbuf[offset+12] = uv[4];
-            vbuf[offset+13] = uv[5];
-            vbuf[offset+17] = uv[6];
-            vbuf[offset+18] = uv[7];
+        if (vbuf && uv) {
+            let start = force ? 0 : this._uvFilled;
+            for (let i = start; i < particleCount; i++) {
+                let offset = i * FLOAT_PER_PARTICLE;
+                vbuf[offset+2] = uv[0];
+                vbuf[offset+3] = uv[1];
+                vbuf[offset+7] = uv[2];
+                vbuf[offset+8] = uv[3];
+                vbuf[offset+12] = uv[4];
+                vbuf[offset+13] = uv[5];
+                vbuf[offset+17] = uv[6];
+                vbuf[offset+18] = uv[7];
+            }
+            this._uvFilled = particleCount;
         }
-        this._uvFilled = particleCount;
     }
 }
 
