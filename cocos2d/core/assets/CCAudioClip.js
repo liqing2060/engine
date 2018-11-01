@@ -46,6 +46,7 @@ var AudioClip = cc.Class({
 
     ctor () {
         this.loaded = false;
+        this.isEffect = false;
 
         // the web audio buffer or <audio> element
         this._audio = null;

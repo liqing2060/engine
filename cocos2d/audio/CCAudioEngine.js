@@ -40,6 +40,7 @@ let recycleAudio = function (audio) {
         audio.off('stop');
         audio.src = null;
         _audioPool.push(audio);
+        // console.log('recycleAudio:' + audio.id + ' pool.length:' + _audioPool.length);
     }
     else {
         audio.destroy();
@@ -141,6 +142,7 @@ var audioEngine = {
             audio.src = clip;
         }
 
+        audio.isEffect = !!clip.isEffect;
         audio.setLoop(loop || false);
         if (typeof volume !== 'number') {
             volume = 1;
@@ -375,6 +377,7 @@ var audioEngine = {
      */
     stop: function (audioID) {
         var audio = getAudioFromId(audioID);
+        // console.log('CCAudioEngine.stop, audioID:' + audioID + ' !!audio:' + !!audio);
         if (audio) {
             // Stop will recycle audio automatically by event callback
             audio.stop();
