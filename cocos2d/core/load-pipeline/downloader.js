@@ -325,6 +325,11 @@ Downloader.prototype.handle = function (item, callback) {
     var self = this;
     var downloadFunc = this.extMap[item.type] || this.extMap['default'];
     var syncRet = undefined;
+    // try {
+    //     console.log('downloader.handle url:' + item.url);
+    // } catch (e) {
+    //     console.log('downloader.handle log exception:' + e);
+    // }
     if (this._curConcurrent < cc.macro.DOWNLOAD_MAX_CONCURRENT) {
         this._curConcurrent++;
         syncRet = downloadFunc.call(this, item, function (err, result) {

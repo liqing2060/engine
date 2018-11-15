@@ -76,8 +76,11 @@ module.exports = {
     _loadNewPack: function (uuid, packUuid, callback) {
         var self = this;
         var packUrl = cc.AssetLibrary.getLibUrlNoExt(packUuid) + '.json';
+        // console.log('PackDownloader._loadNewPack start:' + packUrl);
         cc.loader.load({ url: packUrl, ignoreMaxConcurrency: true }, function (err, packJson) {
             if (err) {
+                // console.log('PackDownloader._loadNewPack error');
+                // console.log('err:' + err);
                 cc.errorID(4916, uuid);
                 return callback(err);
             }

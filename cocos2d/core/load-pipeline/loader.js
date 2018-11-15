@@ -36,6 +36,11 @@ function loadNothing () {
 
 function loadJSON (item) {
     if (typeof item.content !== 'string') {
+        try {
+            console.log('load json fail, item.url:' + item.url + ' content type:' + (typeof item.content));
+        } catch (e) {
+            console.log('load json fail log exception:' + e);
+        }
         return new Error('JSON Loader: Input item doesn\'t contain string content');
     }
 

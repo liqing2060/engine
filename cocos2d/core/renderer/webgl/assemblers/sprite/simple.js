@@ -35,6 +35,16 @@ module.exports = {
         // need to update the logic here
         if (frame) {
             if (!frame._original) {
+                // DEBUG log for qqPlay fps
+                // if (sprite.node) {
+                //     var node = sprite.node;
+                //     var path = '';
+                //     while (node) {
+                //         path = (path.length === 0 ? node.name : node.name + '/') + path;
+                //         node = node.parent;
+                //     }
+                //     console.log('update sprite renderData with node:' + path);
+                // }
                 dynamicAtlasManager.insertSpriteFrame(frame);
             }
             if (!sprite._material || sprite._material._texture !== frame._texture) {
