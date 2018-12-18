@@ -870,8 +870,8 @@ let RichText = cc.Class({
 
         if (textStyle && textStyle.color) {
             labelNode.color = this._convertLiteralColorValue(textStyle.color);
-        }else {
-            labelNode.color = this._convertLiteralColorValue("white");
+        } else {
+            labelNode.color = this.node.color;
         }
 
         labelComponent._enableBold(textStyle && textStyle.bold);

@@ -41,11 +41,12 @@ let recycleAudio = function (audio) {
         audio.off('stop');
         audio.src = null;
         _audioPool.push(audio);
+        // console.log('recycleAudio:' + audio.id + ' pool.length:' + _audioPool.length);
     }
     else {
         audio.destroy();
     }
-};
+}
 
 let getAudioFromPath = function (path) {
     var id = _instanceId++;
@@ -160,6 +161,7 @@ var audioEngine = {
             audio.src = clip;
         }
 
+        audio.isEffect = !!clip.isEffect;
         audio.setLoop(loop || false);
         volume = handleVolume(volume);
         audio.setVolume(volume);
@@ -306,7 +308,10 @@ var audioEngine = {
         var audio = getAudioFromId(audioID);
         if (!audio)
             return;
+        audio.off('ended', audio._finishCallback);
+
         audio._finishCallback = callback;
+        audio.on('ended', audio._finishCallback);
     },
 
     /**
@@ -389,6 +394,7 @@ var audioEngine = {
      */
     stop: function (audioID) {
         var audio = getAudioFromId(audioID);
+        // console.log('CCAudioEngine.stop, audioID:' + audioID + ' !!audio:' + !!audio);
         if (audio) {
             // Stop will recycle audio automatically by event callback
             audio.stop();

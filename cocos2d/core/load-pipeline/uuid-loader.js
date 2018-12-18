@@ -218,6 +218,7 @@ function loadUuid (item, callback) {
             json = JSON.parse(item.content);
         }
         catch (e) {
+            console.error(item.content);
             return new Error(debug.getError(4923, item.id, e.stack));
         }
     }

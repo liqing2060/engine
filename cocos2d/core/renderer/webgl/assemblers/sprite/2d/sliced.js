@@ -114,7 +114,10 @@ module.exports = {
             vertexId = buffer.vertexOffset;
 
         let uvSliced = sprite.spriteFrame.uvSliced;
-
+        if (!uvSliced) {
+            return;
+        }
+            
         buffer.request(vertexCount, renderData.indiceCount);
 
         // buffer data may be realloc, need get reference after request.

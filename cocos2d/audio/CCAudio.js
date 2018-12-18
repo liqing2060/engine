@@ -46,6 +46,7 @@ let Audio = function (src) {
     this._nextTime = 0;  // playback position to set
 
     this._state = Audio.State.INITIALZING;
+    this.isEffect = false;
 
     this._onended = function () {
         this.emit('ended');
@@ -146,6 +147,7 @@ Audio.State = {
         }
 
         this._bindEnded();
+        this._element.isEffect = !!this.isEffect;
         this._element.play();
 
         if (!CC_QQPLAY && !CC_WECHATGAME) {

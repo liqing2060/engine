@@ -563,7 +563,7 @@ var Sprite = cc.Class({
 
     markForUpdateRenderData (enable) {
         if (enable && this._canRender()) {
-            this.node._renderFlag |= RenderFlow.FLAG_UPDATE_RENDER_DATA;
+            this.node && (this.node._renderFlag |= RenderFlow.FLAG_UPDATE_RENDER_DATA);
             
             let renderData = this._renderData;
             if (renderData) {
@@ -572,12 +572,12 @@ var Sprite = cc.Class({
             }
         }
         else if (!enable) {
-            this.node._renderFlag &= ~RenderFlow.FLAG_UPDATE_RENDER_DATA;
+            this.node && (this.node._renderFlag &= ~RenderFlow.FLAG_UPDATE_RENDER_DATA);
         }
     },
 
     _applySpriteSize: function () {
-        if (this._spriteFrame) {
+        if (this._spriteFrame && this.node) {
             if (SizeMode.RAW === this._sizeMode) {
                 var size = this._spriteFrame.getOriginalSize();
                 this.node.setContentSize(size);

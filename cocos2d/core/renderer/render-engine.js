@@ -9535,9 +9535,9 @@ var Device = function Device(canvasEL, opts) {
 
   try {
     gl = canvasEL.getContext('webgl', opts)
-      || canvasEL.getContext('experimental-webgl', opts)
-      || canvasEL.getContext('webkit-3d', opts)
-      || canvasEL.getContext('moz-webgl', opts);
+     || canvasEL.getContext('experimental-webgl', opts)
+     || canvasEL.getContext('webkit-3d', opts)
+     || canvasEL.getContext('moz-webgl', opts);
   } catch (err) {
     console.error(err);
     return;
@@ -9599,16 +9599,13 @@ Device.prototype._initExtensions = function _initExtensions (extensions) {
   for (var i = 0; i < extensions.length; ++i) {
     var name = extensions[i];
 
-    var vendorPrefixes = ["", "WEBKIT_", "MOZ_"];
-    for (var j = 0; j < vendorPrefixes.length; j++) {
-      try {
-        var ext = gl.getExtension(vendorPrefixes[j] + name);
-        if (ext) {
-          this$1._extensions[name] = ext;
-        }
-      } catch (e) {
-        console.error(e);
+    try {
+      var ext = gl.getExtension(name);
+      if (ext) {
+        this$1._extensions[name] = ext;
       }
+    } catch (e) {
+      console.error(e);
     }
   }
 };
@@ -9680,12 +9677,7 @@ Device.prototype._restoreIndexBuffer = function _restoreIndexBuffer () {
   var gl = this._gl;
 
   var ib = this._current.indexBuffer;
-  if (ib && ib._glID !== -1) {
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib._glID);
-  }
-  else {
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-  }
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib ? ib._glID : null);
 };
 
 /**
@@ -12712,6 +12704,7 @@ var RecyclePool = function RecyclePool(fn, size) {
   this._fn = fn;
   this._count = 0;
   this._data = new Array(size);
+  this._initSize = size;
 
   for (var i = 0; i < size; ++i) {
     this$1._data[i] = fn();
@@ -12739,6 +12732,15 @@ RecyclePool.prototype.resize = function resize (size) {
     for (var i = this._data.length; i < size; ++i) {
       this$1._data[i] = this$1._fn();
     }
+  } else if (size < this._data.length) {
+    if (this._count > size) {
+      size = this._count;
+    }
+    for (var i = size; i < this._data.length; ++i) {
+      this$1._data[i] = null;
+    }
+    // console.log(`resize pool from ${this._data.length} to ${size}`);
+    this._data.length = size;
   }
 };
 
@@ -12764,6 +12766,10 @@ RecyclePool.prototype.remove = function remove (idx) {
 
 RecyclePool.prototype.sort = function sort$1 (cmp) {
   return sort(this._data, 0, this._count, cmp);
+};
+
+RecyclePool.prototype.resetToInit = function resetToInit$1 (cmp) {
+  return this.resize(this._initSize);
 };
 
 Object.defineProperties( RecyclePool.prototype, prototypeAccessors$9 );
@@ -12938,7 +12944,7 @@ var ProgramLib = function ProgramLib(device, templates, chunks) {
   if ( chunks === void 0 ) chunks = {};
 
   this._device = device;
-  this._precision = "precision highp float;\n";
+  this._precision = "precision mediump float;\n";
 
   // register templates
   this._templates = {};
@@ -13338,6 +13344,14 @@ var Base = function Base(device, opts) {
     }, 100);
   }, 16);
 };
+
+Base.prototype.clearPools = function clearPools() {
+  this._drawItemsPools.resetToInit();
+  for (let index = 0; index < this._stageItemsPools._data.length; index++) {
+    const pool = this._stageItemsPools._data[index];
+    pool.resetToInit();
+  }
+},
 
 Base.prototype._resetTextuerUnit = function _resetTextuerUnit () {
   this._usedTextureUnits = 0;
@@ -13885,7 +13899,7 @@ var RenderData = (function (BaseRenderData$$1) {
 
   RenderData.free = function free (data) {
     if (data instanceof RenderData) {
-      for (var i = data.length-1; i > 0; i--) {
+      for (var i = data._data.length-1; i >= 0; i--) {
         _dataPool.free(data._data[i]);
       }
       data._data.length = 0;

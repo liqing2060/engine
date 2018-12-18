@@ -157,8 +157,10 @@ gulp.task('build-dev', ['clean-cache', 'build-html5-preview', 'build-jsb-preview
 // only build preview for html5 since it will built by editor
 gulp.task('build', ['clean-cache', 'build-html5-preview', 'build-jsb']);
 
+gulp.task('build-h5', ['clean-cache', 'build-html5-preview']);
+
 // default task
-gulp.task('default', ['build']);
+gulp.task('default', ['build-h5']);
 
 gulp.task('clean', function () {
     return Del('./bin/**/*');

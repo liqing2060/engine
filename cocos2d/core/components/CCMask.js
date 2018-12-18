@@ -316,7 +316,7 @@ let Mask = cc.Class({
         }
     },
 
-    _onTextureLoaded () {
+    _onTextureLoaded: function (event) {
         // Mark render data dirty
         if (this._renderData) {
             this._renderData.uvDirty = true;
@@ -329,7 +329,7 @@ let Mask = cc.Class({
         }
     },
 
-    _applySpriteFrame (oldFrame) {
+    _applySpriteFrame: function (oldFrame) {
         if (oldFrame && oldFrame.off) {
             oldFrame.off('load', this._onTextureLoaded, this);
         }
@@ -345,7 +345,7 @@ let Mask = cc.Class({
         }
     },
 
-    _activateMaterial () {
+    _activateMaterial: function () {
         // cannot be activated if texture not loaded yet
         if (this._type === MaskType.IMAGE_STENCIL && (!this.spriteFrame || !this.spriteFrame.textureLoaded())) {
             this.markForRender(false);

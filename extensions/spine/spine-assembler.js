@@ -232,6 +232,8 @@ var spineAssembler = {
                 data = datas[dataId];
                 if (!data) {
                     data = datas[dataId] = comp.requestRenderData();
+                } else {
+                    data = datas[dataId];
                 }
                 data.dataLength = vertexCount;
                 data.material = currMaterial;
@@ -292,6 +294,14 @@ var spineAssembler = {
                 if (i === 0) {
                     graphics.fillColor = _originColor;
                 }
+            }
+        }
+
+        if (comp.debugBones || comp.debugSlots) {
+            let renderDatas = graphics._impl._renderDatas;
+            for (let i = 0; i < renderDatas.length; i++) {
+                renderDatas[i].material = _debugMaterial;
+                datas.push(renderDatas[i]);
             }
         }
     },

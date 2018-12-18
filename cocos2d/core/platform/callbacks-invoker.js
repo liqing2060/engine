@@ -98,6 +98,9 @@ proto = CallbacksHandler.prototype;
  * @param {Object} [target] - can be null
  */
 proto.add = function (key, callback, target) {
+    if (!this._callbackTable) {
+        return;
+    }
     var list = this._callbackTable[key];
     if (!list) {
         list = this._callbackTable[key] = callbackListPool.get();
@@ -116,6 +119,9 @@ proto.add = function (key, callback, target) {
  * @return {Boolean}
  */
 proto.hasEventListener = function (key, callback, target) {
+    if (!this._callbackTable) {
+        return false;
+    }
     var list = this._callbackTable[key];
     if (!list) {
         return false;
