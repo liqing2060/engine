@@ -959,9 +959,9 @@ let NodeDefines = {
             set (value) {
                 if (!this._color.equals(value)) {
                     this._color.set(value);
-                    if (CC_DEV && value.a !== 255) {
-                        cc.warnID(1626);
-                    }
+                    // if (CC_DEV && value.a !== 255) {
+                    //     cc.warnID(1626);
+                    // }
                     
                     if (this._renderComponent) {
                         this._renderFlag |= RenderFlow.FLAG_COLOR;

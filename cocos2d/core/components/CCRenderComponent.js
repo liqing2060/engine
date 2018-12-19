@@ -154,10 +154,10 @@ let RenderComponent = cc.Class({
 
     markForCustomIARender (enable) {
         if (enable && this._canRender()) {
-            this.node._renderFlag |= RenderFlow.FLAG_CUSTOM_IA_RENDER;
+            if (this.node) this.node._renderFlag |= RenderFlow.FLAG_CUSTOM_IA_RENDER;
         }
         else if (!enable) {
-            this.node._renderFlag &= ~RenderFlow.FLAG_CUSTOM_IA_RENDER;
+            if (this.node) this.node._renderFlag &= ~RenderFlow.FLAG_CUSTOM_IA_RENDER;
         }
     },
 
