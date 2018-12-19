@@ -714,6 +714,17 @@ var _Deserializer = (function () {
                 unlinkUnusedPrefab(self, serialized, obj);
             }
         }
+        if (klass === cc.Node) {
+            if (obj._scaleX !== undefined || obj._scaleY !== undefined) {
+                if (obj._scaleX !== undefined && obj._scaleY !== undefined) {
+                    obj.setScale(obj._scaleX, obj._scaleY);
+                } else if (obj._scaleX !== undefined) {
+                    obj.scaleX = obj._scaleX;
+                } else if (obj._scaleY !== undefined) {
+                    obj.scaleY = obj._scaleY;
+                }
+            }
+        }
     }
 
     _Deserializer.pool = new js.Pool(function (obj) {

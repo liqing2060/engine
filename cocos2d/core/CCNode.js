@@ -3185,31 +3185,31 @@ let NodeDefines = {
     },
 };
 
-if (CC_EDITOR) {
+// if (CC_EDITOR) {
     // deprecated, only used to import old data in editor
     js.mixin(NodeDefines.properties, {
         _scaleX: {
             default: undefined,
             type: cc.Float,
-            editorOnly: true
+            // editorOnly: true
         },
         _scaleY: {
             default: undefined,
             type: cc.Float,
-            editorOnly: true
+            // editorOnly: true
         },
         _rotationX: {
             default: undefined,
             type: cc.Float,
-            editorOnly: true
+            // editorOnly: true
         },
         _rotationY: {
             default: undefined,
             type: cc.Float,
-            editorOnly: true
+            // editorOnly: true
         },
     });
-}
+// }
 
 let Node = cc.Class(NodeDefines);
 
