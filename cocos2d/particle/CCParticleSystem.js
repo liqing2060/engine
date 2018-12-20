@@ -988,6 +988,7 @@ var ParticleSystem = cc.Class({
     ctor: function () {
         this._previewTimer = null;
         this._focused = false;
+        this._willStart = false;
         this._texture = null;
 
         this._simulator = new ParticleSimulator(this);
@@ -1050,6 +1051,20 @@ var ParticleSystem = cc.Class({
         this._focused = true;
         if (this.preview) {
             this.resetSystem();
+
+            var self = this;
+            this._previewTimer = setInterval(function () {
+                // attemptToReplay
+                if (!self._willStart && self.particleCount === 0) {
+                    self._willStart = true;
+                    setTimeout(function () {
+                        self._willStart = false;
+                        if (self.preview && self._focused && !self.active && !cc.engine.isPlaying) {
+                            self.resetSystem();
+                        }
+                    }, 600);
+                }
+            }, 100);
         }
     },
 
@@ -1069,26 +1084,30 @@ var ParticleSystem = cc.Class({
     // LIFE-CYCLE METHODS
 
     __preload: function () {
+        var isApplied = false;
         if (this._custom) {
-            var hasCustomSprite = this._spriteFrame !== null
+            var hasCustomSprite = this._spriteFrame !== null;
             var hasCustomTexture = this._texture !== null;
-            // if customSprite continue
-            if(!hasCustomSprite) {
-                if(hasCustomTexture) {
-                    // down to load texture from v1.9
-                    this.spriteFrame = new cc.SpriteFrame(this._texture);
-                }
+            if (!hasCustomSprite && hasCustomTexture) {
+                // down to load texture from v1.9
+                this._spriteFrame = new cc.SpriteFrame(this._texture);
             }
-        } else if (this._file) {
-            this._applyFile();
+
+            if (this._spriteFrame && !this._renderSpriteFrame) {
+                this._applySpriteFrame(this._spriteFrame);
+                isApplied = true;
+            }
         }
-        else if (this._custom && this.spriteFrame && !this._renderSpriteFrame) {
-            this._applySpriteFrame(this.spriteFrame);
+        if (!isApplied && this._file) {
+            this._applyFile();
         }
         // auto play
         if (!CC_EDITOR || cc.engine.isPlaying) {
             if (this.playOnLoad) {
                 this.resetSystem();
+            } else {
+                // liqing add this line to avoid particle with autoRemoveOnFinish destroy node
+                if (this._simulator) this._simulator.finished = true;
             }
         }
         // Upgrade color type from v2.0.0
