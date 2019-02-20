@@ -49,7 +49,7 @@ function loadJSON (item) {
     }
 }
 
-function loadImage (item) {
+function loadImage (item, callback) {
     var loadByDeserializedAsset = (item._owner instanceof cc.Asset);
     if (loadByDeserializedAsset) {
         // already has cc.Asset
@@ -67,7 +67,12 @@ function loadImage (item) {
     tex._uuid = item.uuid;
     tex.url = rawUrl;
     tex._setRawAsset(rawUrl, false);
-    tex._nativeAsset = image;
+    try {
+        tex._nativeAsset = image;
+    } catch (e) {
+        console.error(e.message);
+        if (callback) callback(e.message, null);
+    }
     return tex;
 }
 

@@ -51,6 +51,8 @@ function mul (out, a, b) {
 }
 
 _proto._worldTransform = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+
     _walker.worldMatDirty ++;
 
     let t = node._matrix;
@@ -66,6 +68,8 @@ _proto._worldTransform = function (node) {
 };
 
 _proto._color = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+
     let comp = node._renderComponent;
     if (comp) {
         comp._updateColor();
@@ -77,6 +81,8 @@ _proto._color = function (node) {
 };
 
 _proto._opacity = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+
     _walker.parentOpacityDirty++;
 
     node._renderFlag &= ~OPACITY;
@@ -86,6 +92,8 @@ _proto._opacity = function (node) {
 };
 
 _proto._updateRenderData = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+
     let comp = node._renderComponent;
     comp._assembler.updateRenderData(comp);
     node._renderFlag &= ~UPDATE_RENDER_DATA;
@@ -93,18 +101,24 @@ _proto._updateRenderData = function (node) {
 };
 
 _proto._render = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+
     let comp = node._renderComponent;
     _walker._commitComp(comp, comp._assembler, node._cullingMask);
     this._next._func(node);
 };
 
 _proto._customIARender = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+
     let comp = node._renderComponent;
     _walker._commitIA(comp, comp._assembler, node._cullingMask);
     this._next._func(node);
 };
 
 _proto._children = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+    
     let parentOpacity = _walker.parentOpacity;
     let opacity = (_walker.parentOpacity *= (node._opacity / 255));
 
@@ -132,6 +146,8 @@ _proto._children = function (node) {
 };
 
 _proto._postUpdateRenderData = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+
     let comp = node._renderComponent;
     comp._postAssembler && comp._postAssembler.updateRenderData(comp);
     node._renderFlag &= ~POST_UPDATE_RENDER_DATA;
@@ -139,6 +155,8 @@ _proto._postUpdateRenderData = function (node) {
 };
 
 _proto._postRender = function (node) {
+    if (node._opacity === 0 || node._customInvisibleFlag === true) return;
+
     let comp = node._renderComponent;
     _walker._commitComp(comp, comp._postAssembler, node._cullingMask);
     this._next._func(node);

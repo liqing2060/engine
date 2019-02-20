@@ -762,6 +762,23 @@ var Node = cc.Class({
         },
 
         /**
+         * !#en
+         * Angle of node, the positive value is anti-clockwise direction.
+         * !#zh
+         * 该节点的旋转角度，正值为逆时针方向。
+         * @property angle
+         * @type {Number}
+         */
+        angle: {
+            get () {
+                return -this.rotation;
+            },
+            set (value) {
+                this.rotation = -value;
+            }
+        },
+
+        /**
          * !#en Rotation on x axis.
          * !#zh 该节点 X 轴旋转角度。
          * @property rotationX
@@ -2340,6 +2357,10 @@ var Node = cc.Class({
             curr = curr._parent;
         }
         return out;
+    },
+
+    getWorldPosition (out) {
+        return this.getWorldPos(out);
     },
 
     /*
