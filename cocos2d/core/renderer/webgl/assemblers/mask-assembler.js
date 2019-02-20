@@ -48,7 +48,7 @@ let maskFrontAssembler = {
         let renderData = mask._renderData;
 
         if (mask._type === Mask.Type.IMAGE_STENCIL) {
-            if (mask.spriteFrame) {
+            if (mask._material && mask.spriteFrame) {
                 let size = mask.node._contentSize;
                 let anchor = mask.node._anchorPoint;
                 renderData.updateSizeNPivot(size.width, size.height, anchor.x, anchor.y);
