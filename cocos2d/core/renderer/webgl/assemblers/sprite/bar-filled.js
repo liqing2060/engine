@@ -149,6 +149,8 @@ module.exports = {
     },
 
     updateVerts (sprite, fillStart, fillEnd) {
+        if (!sprite || !sprite.node) return;
+
         let renderData = sprite._renderData,
             data = renderData._data,
             node = sprite.node,

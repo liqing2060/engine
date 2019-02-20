@@ -72,6 +72,8 @@ module.exports = js.addon({
     },
 
     _updateVerts (comp) {
+        if (!comp || !comp.node) return;
+
         let renderData = comp._renderData;
 
         let node = comp.node,

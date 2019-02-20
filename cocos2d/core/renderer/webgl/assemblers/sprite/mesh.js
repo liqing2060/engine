@@ -94,6 +94,8 @@ const dynamicAtlasManager = require('../../../utils/dynamic-atlas/manager');
     },
 
     updateVerts (sprite) {
+        if (!sprite || !sprite.node) return;
+
         let node = sprite.node,
             contentWidth = Math.abs(node.width),
             contentHeight = Math.abs(node.height),

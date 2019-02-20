@@ -120,6 +120,8 @@ module.exports = {
     },
 
     updateVerts (sprite) {
+        if (!sprite || !sprite.node) return;
+
         let renderData = sprite._renderData,
             node = sprite.node,
             data = renderData._data,
