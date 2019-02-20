@@ -399,7 +399,8 @@ let Mask = cc.Class({
             this._clearGraphics.node = new Node();
             this._clearGraphics._activateMaterial();
             this._clearGraphics.lineWidth = 0;
-            this._clearGraphics.rect(0, 0, cc.visibleRect.width, cc.visibleRect.height);
+            const clearLength = 100000;
+            this._clearGraphics.rect(-clearLength, -clearLength, 2 * clearLength + cc.visibleRect.width, 2 * clearLength + cc.visibleRect.height); //(0, 0, cc.visibleRect.width, cc.visibleRect.height);
             this._clearGraphics.fill();
         }
     },
